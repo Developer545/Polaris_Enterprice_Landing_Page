@@ -23,11 +23,19 @@ function PolarisMark({ size = 22 }) {
 // ── Nav ────────────────────────────────────────────────────
 function Nav() {
   const [scrolled, setScrolled] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+  React.useEffect(() => {
+    if (!mobileOpen) return;
+    const handler = (e) => { if (!e.target.closest('.nav')) setMobileOpen(false); };
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, [mobileOpen]);
+  const links = [['#producto','Producto'],['#industrias','Industrias'],['#dte','DTE'],['#precios','Precios'],['#faq','FAQ'],['#contacto','Contacto']];
   return (
     <nav className={'nav' + (scrolled ? ' scrolled' : '')}>
       <div className="nav-inner">
@@ -36,15 +44,28 @@ function Nav() {
           <span>Polaris<span className="it"> Enterprise</span></span>
         </a>
         <div className="nav-links">
-          <a href="#producto">Producto</a>
-          <a href="#industrias">Industrias</a>
-          <a href="#dte">DTE</a>
-          <a href="#precios">Precios</a>
-          <a href="#contacto">Contacto</a>
+          {links.map(([href, label]) => <a key={href} href={href}>{label}</a>)}
         </div>
         <div className="nav-cta-group">
           <a className="nav-login" href="#contacto">Iniciar sesión</a>
           <a className="btn btn-ink" href="#descargar">Descargar <span className="arrow">→</span></a>
+          <button
+            className={'nav-hamburger' + (mobileOpen ? ' open' : '')}
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Menú"
+            aria-expanded={mobileOpen}
+          >
+            <span /><span /><span />
+          </button>
+        </div>
+      </div>
+      <div className={'nav-mobile-menu' + (mobileOpen ? ' open' : '')}>
+        {links.map(([href, label]) => (
+          <a key={href} href={href} onClick={() => setMobileOpen(false)}>{label}</a>
+        ))}
+        <div className="nav-mobile-ctas">
+          <a className="btn btn-ghost" href="#contacto" onClick={() => setMobileOpen(false)}>Iniciar sesión</a>
+          <a className="btn btn-ink" href="#descargar" onClick={() => setMobileOpen(false)}>Descargar <span className="arrow">↓</span></a>
         </div>
       </div>
     </nav>
@@ -106,6 +127,11 @@ function Hero() {
               <span className="trust-item">Instalación 2 min</span>
               <span className="trust-item">Funciona offline</span>
               <span className="trust-item">Soporte en SV</span>
+            </div>
+
+            <div className="scroll-indicator">
+              <span>scroll</span>
+              <div className="scroll-indicator-line"></div>
             </div>
           </div>
 
@@ -477,7 +503,7 @@ function Contact() {
       <div className="container">
         <div className="section-head">
           <div className="meta">
-            <span className="num">08</span>
+            <span className="num">09</span>
             <span className="label">/ Hablemos</span>
           </div>
           <div>
@@ -513,7 +539,7 @@ function CTAFinal() {
         <h2 className="display">Tu negocio, <em>con norte.</em></h2>
         <p>Instalalo en Windows en dos minutos. Configurá tu primera factura DTE antes del café.</p>
         <div className="cta-actions">
-          <a href="#" className="btn btn-ink" onClick={(e) => { e.preventDefault(); alert('¡Próximamente! El instalador estará disponible en la primera versión oficial.'); }}>
+          <a href="#" className="btn btn-ink" onClick={(e) => { e.preventDefault(); document.querySelector('#contacto')?.scrollIntoView({ behavior: 'smooth' }); }}>
             Descargar para Windows <span className="arrow">↓</span>
           </a>
           <a href="#contacto" className="btn btn-outline">Hablar con un humano <span className="arrow">→</span></a>
@@ -782,13 +808,17 @@ function App() {
       <Nav />
       <Hero />
       <Marquee speed={t.marqueeSpeed} />
+      <Stats />
+      <LogoWall />
       <Bento />
       <IndustriesSection />
       <FeaturesSection />
+      <Comparison />
       <Modules />
       <CalculatorSection />
       <Pricing />
       <Quotes />
+      <FAQ />
       <Contact />
       <CTAFinal />
       <Footer />
@@ -802,6 +832,190 @@ function App() {
 
       <TweaksUI t={t} setTweak={setTweak} />
     </>
+  );
+}
+
+// ── CountUp ────────────────────────────────────────────────
+function CountUp({ to, decimals = 0, run }) {
+  const [val, setVal] = React.useState(0);
+  React.useEffect(() => {
+    if (!run) return;
+    const duration = 1600, frames = 60;
+    const stepV = to / frames;
+    let cur = 0;
+    const id = setInterval(() => {
+      cur = Math.min(cur + stepV, to);
+      setVal(cur);
+      if (cur >= to) clearInterval(id);
+    }, duration / frames);
+    return () => clearInterval(id);
+  }, [run, to]);
+  if (decimals > 0) return <>{val.toFixed(decimals)}</>;
+  return <>{Math.round(val).toLocaleString('es-SV')}</>;
+}
+
+// ── Stats ─────────────────────────────────────────────────
+function Stats() {
+  const [visible, setVisible] = React.useState(false);
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setVisible(true); obs.disconnect(); }
+    }, { threshold: 0.25 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  const stats = [
+    { num: 500,  suffix: '+',    label: 'Negocios activos',  sub: 'en todo El Salvador' },
+    { num: 2,    suffix: 'M+',   label: 'DTE emitidos',      sub: 'al Ministerio de Hacienda' },
+    { num: 99.9, suffix: '%',    label: 'Uptime',            sub: 'promedio anual', dec: 1 },
+    { num: 2,    suffix: ' min', label: 'Para instalar',     sub: 'y ya estás facturando' },
+  ];
+  return (
+    <div className="stats-section" ref={ref}>
+      <div className="container">
+        <div className="stats-grid">
+          {stats.map((s, i) => (
+            <div className="stat-item" key={i}>
+              <div className="stat-num">
+                <CountUp to={s.num} decimals={s.dec || 0} run={visible} />{s.suffix}
+              </div>
+              <div className="stat-label">{s.label}</div>
+              <div className="stat-sub">{s.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── LogoWall ──────────────────────────────────────────────
+function LogoWall() {
+  const logos = [
+    { name: 'Ferretería Los Ceibos', sector: 'Ferretería' },
+    { name: 'Distribuidora Omega',   sector: 'Distribución' },
+    { name: 'Restaurante La Fogata', sector: 'Restaurante' },
+    { name: 'Farmacia Vida',         sector: 'Salud' },
+    { name: 'Hotel Pacífico',        sector: 'Hotelería' },
+    { name: 'Super Don Quique',      sector: 'Retail' },
+    { name: 'Clínica Santa Rosa',    sector: 'Médico' },
+    { name: 'Taller ElectroPro',     sector: 'Automotriz' },
+  ];
+  return (
+    <div className="logo-wall">
+      <div className="container">
+        <p className="logo-wall-eyebrow">Negocios salvadoreños que ya usan Polaris Enterprise</p>
+        <div className="logo-wall-grid">
+          {logos.map((l, i) => (
+            <div className="logo-tile" key={i}>
+              <span className="logo-tile-sector">{l.sector}</span>
+              <span className="logo-tile-name">{l.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Comparison ────────────────────────────────────────────
+function Comparison() {
+  const rows = [
+    { feature: 'Facturación DTE electrónica',   excel: false, otro: 'Parcial',  polaris: true },
+    { feature: 'POS con scanner y teclado',      excel: false, otro: true,       polaris: true },
+    { feature: 'Funciona sin internet',          excel: true,  otro: false,      polaris: true },
+    { feature: 'Multi-sucursal / multi-bodega',  excel: false, otro: 'Extra',    polaris: true },
+    { feature: 'Inventario + kardex automático', excel: false, otro: 'Básico',   polaris: true },
+    { feature: 'Planilla ISSS / AFP / ISR',      excel: false, otro: false,      polaris: true },
+    { feature: 'Sin renta mensual',              excel: true,  otro: false,      polaris: true },
+    { feature: 'Soporte local en El Salvador',   excel: false, otro: false,      polaris: true },
+    { feature: 'Actualizaciones automáticas',    excel: false, otro: 'Pagadas',  polaris: true },
+  ];
+  const Cell = ({ val }) => {
+    if (val === true)  return <span className="cmp-yes">✓</span>;
+    if (val === false) return <span className="cmp-no">✗</span>;
+    return <span className="cmp-partial">{val}</span>;
+  };
+  return (
+    <section className="section">
+      <div className="container">
+        <div className="section-head" style={{ gridTemplateColumns: '1fr' }}>
+          <div>
+            <h2 className="display">¿Por qué no seguir <em>con Excel?</em></h2>
+            <p className="desc" style={{ marginTop: 16 }}>Una comparación directa — sin letra pequeña, sin vendedores en el teléfono.</p>
+          </div>
+        </div>
+        <div className="cmp-table-wrap">
+          <table className="cmp-table">
+            <thead>
+              <tr>
+                <th className="cmp-feature-col">Funcionalidad</th>
+                <th>Excel + Hacienda manual</th>
+                <th>Otro sistema del mercado</th>
+                <th className="cmp-polaris-col">Polaris Enterprise</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr key={i}>
+                  <td className="cmp-feature">{r.feature}</td>
+                  <td><Cell val={r.excel} /></td>
+                  <td><Cell val={r.otro} /></td>
+                  <td className="cmp-polaris-cell"><Cell val={r.polaris} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── FAQ ───────────────────────────────────────────────────
+function FAQ() {
+  const [open, setOpen] = React.useState(null);
+  const items = [
+    { q: '¿Funciona sin conexión a internet?',
+      a: 'Sí. Polaris guarda todo localmente y sincroniza solo cuando recuperás la conexión. Nunca parás de vender ni de facturar.' },
+    { q: '¿Qué pasa si Hacienda rechaza un DTE?',
+      a: 'El sistema avisa en tiempo real con el código de error exacto del MH. Podés corregir y reenviar sin perder el correlativo ni detener la caja.' },
+    { q: '¿Cuánto cuesta instalar Polaris Enterprise?',
+      a: 'La descarga e instalación son completamente gratis. Solo comprás paquetes de DTE electrónicos cuando los necesitás. Sin contrato, sin renta mensual.' },
+    { q: '¿Compatible con mi impresora térmica?',
+      a: 'Soporta cualquier impresora ESC/POS: Epson, Bixolon, Star, ZKTeco, Sewoo y modelos genéricos USB o en red.' },
+    { q: '¿Puedo manejar varias sucursales desde un solo panel?',
+      a: 'Sí. Multi-sucursal incluido sin costo adicional. Ves ventas, inventario y DTEs de todas tus tiendas consolidados en tiempo real.' },
+    { q: '¿Mis datos están seguros?',
+      a: 'Backup diario cifrado en la nube. Tus datos también viven localmente — si el servidor cae, tu operación no para con él.' },
+  ];
+  return (
+    <section className="section" id="faq">
+      <div className="container">
+        <div className="section-head">
+          <div className="meta">
+            <span className="num">08</span>
+            <span className="label">/ FAQ</span>
+          </div>
+          <div>
+            <h2 className="display">Preguntas <em>frecuentes.</em></h2>
+            <p className="desc">Las mismas que nos hacen todos los días — respondidas aquí.</p>
+          </div>
+        </div>
+        <div className="faq-list">
+          {items.map((item, i) => (
+            <div className={`faq-item${open === i ? ' open' : ''}`} key={i}>
+              <button className="faq-trigger" onClick={() => setOpen(open === i ? null : i)}>
+                <span>{item.q}</span>
+                <span className="faq-icon">+</span>
+              </button>
+              <div className="faq-answer">{item.a}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
