@@ -590,7 +590,200 @@ function DTECalculator() {
   );
 }
 
+// ── Module Builder ─────────────────────────────────────────
+
+const MODULES_DATA = [
+  // Tier 1 — Esenciales
+  { id: 'pos',       tier: 1, name: 'Caja POS',              price: 20, desc: 'Ventas rápidas, scanner, atajos de teclado y multi-pago.',      deps: [] },
+  { id: 'crm',       tier: 1, name: 'Clientes / CRM',         price: 12, desc: 'Historial de compras, segmentos y descuentos por categoría.',   deps: [] },
+  { id: 'reportes',  tier: 1, name: 'Reportes ejecutivos',    price: 12, desc: 'Dashboards en tiempo real exportables a PDF y Excel.',          deps: ['pos'] },
+  // Tier 2 — Operacional
+  { id: 'inventario',tier: 2, name: 'Inventario + Kardex',    price: 20, desc: 'Multi-bodega, costos PEPS/promedio, conteo físico móvil.',      deps: [] },
+  { id: 'compras',   tier: 2, name: 'Compras + Proveedores',  price: 18, desc: 'Órdenes de compra, recepción y cuentas por pagar.',             deps: ['inventario'] },
+  { id: 'cxc',       tier: 2, name: 'Cuentas por cobrar',     price: 15, desc: 'Antigüedad de saldos, abonos parciales y recordatorios.',       deps: ['crm'] },
+  // Tier 3 — Avanzado
+  { id: 'planilla',  tier: 3, name: 'Empleados + Planilla SV',price: 38, desc: 'ISSS, AFP, ISR automático. Boletas y constancias mensuales.',   deps: [] },
+  { id: 'api',       tier: 3, name: 'API & Conectores',       price: 45, desc: 'Integrá tu e-commerce, contabilidad o sistema heredado.',       deps: [] },
+];
+
+const BUNDLES_DATA = [
+  { id: 'starter',    name: 'Starter',     color: 'default', desc: 'Para empezar',      modules: ['pos'] },
+  { id: 'tienda',     name: 'Tienda',      color: 'accent',  desc: 'La tienda completa', modules: ['pos', 'inventario', 'crm'] },
+  { id: 'operaciones',name: 'Operaciones', color: 'warm',    desc: 'Control total',      modules: ['pos', 'inventario', 'compras', 'cxc', 'reportes'] },
+  { id: 'empresa',    name: 'Empresa',     color: 'dark',    desc: 'Para crecer',        modules: ['pos', 'inventario', 'compras', 'cxc', 'planilla', 'reportes'] },
+];
+
+function getBundlePrice(moduleIds) {
+  const raw = moduleIds.reduce((s, id) => {
+    const m = MODULES_DATA.find((x) => x.id === id);
+    return s + (m ? m.price : 0);
+  }, 0);
+  const disc = moduleIds.length >= 5 ? 0.15 : moduleIds.length >= 3 ? 0.10 : 0;
+  return { raw, disc: Math.round(raw * disc), final: Math.round(raw * (1 - disc)) };
+}
+
+function ModuleCard({ mod, isSelected, onToggle }) {
+  const depNames = mod.deps.map((d) => MODULES_DATA.find((x) => x.id === d)?.name).filter(Boolean);
+  return (
+    <div className={`mb-module-card${isSelected ? ' selected' : ''}`} onClick={() => onToggle(mod.id)} role="checkbox" aria-checked={isSelected} tabIndex={0} onKeyDown={(e) => e.key === ' ' && onToggle(mod.id)}>
+      <div className="mb-mod-check">{isSelected ? '✓' : ''}</div>
+      <div className="mb-mod-info">
+        <div className="mb-mod-name">{mod.name}</div>
+        <div className="mb-mod-desc">{mod.desc}</div>
+        {mod.deps.length > 0 && <div className="mb-mod-deps">requiere: {depNames.join(', ')}</div>}
+      </div>
+      <div className="mb-mod-price">${mod.price}<span>/mes</span></div>
+    </div>
+  );
+}
+
+function ModuleBuilder() {
+  const [selected, setSelected] = React.useState(new Set());
+  const [sucursales, setSucursales] = React.useState(1);
+
+  const toggle = (id) => {
+    const mod = MODULES_DATA.find((m) => m.id === id);
+    const next = new Set(selected);
+    if (next.has(id)) {
+      next.delete(id);
+      // remove modules that depend on this
+      MODULES_DATA.forEach((m) => { if (m.deps.includes(id)) next.delete(m.id); });
+    } else {
+      next.add(id);
+      // auto-add dependencies
+      mod.deps.forEach((d) => next.add(d));
+    }
+    setSelected(next);
+  };
+
+  const applyBundle = (bundle) => setSelected(new Set(bundle.modules));
+
+  const activeBundleId = BUNDLES_DATA.find((b) => {
+    const bs = new Set(b.modules);
+    return bs.size === selected.size && [...bs].every((m) => selected.has(m));
+  })?.id;
+
+  const rawTotal  = [...selected].reduce((s, id) => s + (MODULES_DATA.find((m) => m.id === id)?.price || 0), 0);
+  const discPct   = selected.size >= 5 ? 15 : selected.size >= 3 ? 10 : 0;
+  const discAmt   = Math.round(rawTotal * discPct / 100);
+  const extraBranches = Math.max(0, sucursales - 1);
+  const branchCost    = extraBranches * 15;
+  const finalTotal    = rawTotal - discAmt + branchCost;
+
+  const tiers = [
+    { label: 'Tier 1 — Esenciales', num: 1 },
+    { label: 'Tier 2 — Operacional', num: 2 },
+    { label: 'Tier 3 — Avanzado', num: 3 },
+  ];
+
+  return (
+    <div className="module-builder">
+
+      {/* Bundle presets */}
+      <div className="mb-bundles">
+        {BUNDLES_DATA.map((b) => {
+          const { final, disc } = getBundlePrice(b.modules);
+          const isActive = activeBundleId === b.id;
+          return (
+            <button key={b.id} className={`mb-bundle-btn mb-bundle-${b.color}${isActive ? ' active' : ''}`} onClick={() => applyBundle(b)}>
+              {disc > 0 && <span className="mb-bundle-badge">−{b.modules.length >= 5 ? 15 : 10}%</span>}
+              <span className="mb-bundle-name">{b.name}</span>
+              <span className="mb-bundle-desc">{b.desc}</span>
+              <span className="mb-bundle-price">${final}<small>/mes</small></span>
+              {disc > 0 && <span className="mb-bundle-save">ahorrás ${disc} vs individual</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mb-main">
+        {/* Left: module list */}
+        <div className="mb-modules">
+          {tiers.map((tier) => (
+            <React.Fragment key={tier.num}>
+              <div className="mb-tier-label">{tier.label}</div>
+              {MODULES_DATA.filter((m) => m.tier === tier.num).map((mod) => (
+                <ModuleCard key={mod.id} mod={mod} isSelected={selected.has(mod.id)} onToggle={toggle} />
+              ))}
+            </React.Fragment>
+          ))}
+
+          {/* Multi-sucursal */}
+          <div className="mb-tier-label">Multi-sucursal</div>
+          <div className="mb-sucursal-card">
+            <div>
+              <div className="mb-suc-name">Sucursales adicionales</div>
+              <div className="mb-suc-price">$15/mes por sucursal</div>
+              <div className="mb-suc-note">Primera sucursal incluida · precio cliente activo</div>
+            </div>
+            <div className="mb-suc-counter">
+              <button onClick={() => setSucursales((v) => Math.max(1, v - 1))}>−</button>
+              <span>{sucursales}</span>
+              <button onClick={() => setSucursales((v) => Math.min(10, v + 1))}>+</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: summary */}
+        <div className="mb-summary">
+          <div className="mb-sum-label">Resumen del plan</div>
+
+          {selected.size === 0 && extraBranches === 0 ? (
+            <div className="mb-sum-empty">Elegí un bundle o seleccioná módulos</div>
+          ) : (
+            <>
+              <div className="mb-sum-lines">
+                {[...selected].map((id) => {
+                  const mod = MODULES_DATA.find((m) => m.id === id);
+                  return mod ? (
+                    <div className="mb-sum-line" key={id}>
+                      <span>{mod.name}</span>
+                      <span>${mod.price}/mes</span>
+                    </div>
+                  ) : null;
+                })}
+                {extraBranches > 0 && (
+                  <div className="mb-sum-line">
+                    <span>{extraBranches} sucursal{extraBranches > 1 ? 'es' : ''} extra</span>
+                    <span>${branchCost}/mes</span>
+                  </div>
+                )}
+              </div>
+
+              {discPct > 0 && (
+                <div className="mb-sum-discount">
+                  <span>Descuento bundle ({discPct}%)</span>
+                  <span>−${discAmt}/mes</span>
+                </div>
+              )}
+
+              <div className="mb-sum-total">
+                <span>Add-ons / mes</span>
+                <div className="mb-sum-total-num">${finalTotal}<small>/mes</small></div>
+              </div>
+              <div className="mb-sum-note">+ packs DTE según tu volumen mensual</div>
+
+              <a href="#contacto" className="mb-sum-cta">Cotizar este plan →</a>
+
+              {discPct === 0 && selected.size >= 2 && selected.size < 3 && (
+                <div className="mb-upsell">
+                  Agregá 1 módulo más y ahorrás 10% en todo el plan
+                </div>
+              )}
+              {discPct === 10 && selected.size < 5 && (
+                <div className="mb-upsell">
+                  Con {5 - selected.size} módulo{5 - selected.size > 1 ? 's' : ''} más subís al 15% de descuento
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Export
 Object.assign(window, {
-  IndustriesToggle, FeatureTabs, DTECalculator,
+  IndustriesToggle, FeatureTabs, DTECalculator, ModuleBuilder,
 });

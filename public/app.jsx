@@ -649,6 +649,29 @@ function FeaturesSection() {
   );
 }
 
+function ModulePricingSection() {
+  return (
+    <section className="section" id="modulos-precio">
+      <div className="container">
+        <div className="section-head">
+          <div className="meta">
+            <span className="num">04b</span>
+            <span className="label">/ Armá tu plan</span>
+          </div>
+          <div>
+            <h2 className="display">Módulos <em>a la medida.</em></h2>
+            <p className="desc">
+              Empezás con DTE y vas activando lo que necesitás. Sin contratos atados —
+              cada módulo es un add-on mensual sobre tu plan de facturación.
+            </p>
+          </div>
+        </div>
+        <ModuleBuilder />
+      </div>
+    </section>
+  );
+}
+
 function CalculatorSection() {
   return (
     <section className="section">
@@ -815,6 +838,7 @@ function App() {
       <FeaturesSection />
       <Comparison />
       <Modules />
+      <ModulePricingSection />
       <CalculatorSection />
       <Pricing />
       <Quotes />
