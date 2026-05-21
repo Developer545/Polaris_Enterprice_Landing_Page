@@ -47,7 +47,7 @@ function Nav() {
           {links.map(([href, label]) => <a key={href} href={href}>{label}</a>)}
         </div>
         <div className="nav-cta-group">
-          <a className="nav-login" href="#contacto">Iniciar sesión</a>
+          <a className="nav-login" href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener">Iniciar sesión</a>
           <a className="btn btn-ink" href="#descargar">Descargar <span className="arrow">→</span></a>
           <button
             className={'nav-hamburger' + (mobileOpen ? ' open' : '')}
@@ -64,7 +64,7 @@ function Nav() {
           <a key={href} href={href} onClick={() => setMobileOpen(false)}>{label}</a>
         ))}
         <div className="nav-mobile-ctas">
-          <a className="btn btn-ghost" href="#contacto" onClick={() => setMobileOpen(false)}>Iniciar sesión</a>
+          <a className="btn btn-ghost" href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener" onClick={() => setMobileOpen(false)}>Iniciar sesión</a>
           <a className="btn btn-ink" href="#descargar" onClick={() => setMobileOpen(false)}>Descargar <span className="arrow">↓</span></a>
         </div>
       </div>
@@ -118,8 +118,8 @@ function Hero() {
             </div>
 
             <div className="hero-cta">
-              <a className="btn btn-ink" href="#descargar">Descargar para Windows <span className="arrow">↓</span></a>
-              <a className="btn btn-ghost" href="#producto">Ver el producto en vivo <span className="arrow">→</span></a>
+              <a className="btn btn-ink" href="https://github.com/Developer545/polaris-releases/releases/latest/download/Polaris-Setup-1.0.0.exe" download>Descargar para Windows <span className="arrow">↓</span></a>
+              <a className="btn btn-ghost" href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener">Abrir versión web <span className="arrow">→</span></a>
             </div>
 
             <div className="hero-trust-row">
@@ -539,10 +539,10 @@ function CTAFinal() {
         <h2 className="display">Tu negocio, <em>con norte.</em></h2>
         <p>Instalalo en Windows en dos minutos. Configurá tu primera factura DTE antes del café.</p>
         <div className="cta-actions">
-          <a href="#" className="btn btn-ink" onClick={(e) => { e.preventDefault(); document.querySelector('#contacto')?.scrollIntoView({ behavior: 'smooth' }); }}>
+          <a href="https://github.com/Developer545/polaris-releases/releases/latest/download/Polaris-Setup-1.0.0.exe" className="btn btn-ink" download>
             Descargar para Windows <span className="arrow">↓</span>
           </a>
-          <a href="#contacto" className="btn btn-outline">Hablar con un humano <span className="arrow">→</span></a>
+          <a href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener" className="btn btn-outline">Abrir versión web <span className="arrow">→</span></a>
         </div>
         <div className="post-cta">
           <span>Windows 10 / 11</span>
