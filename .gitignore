@@ -34,3 +34,5 @@ logs/
 
 # Sensitive / work-in-progress folder
 polaris/
+
+.vercel

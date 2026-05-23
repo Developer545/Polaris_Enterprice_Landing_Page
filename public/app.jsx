@@ -3,6 +3,28 @@
    Pricing, Quotes, Contact, CTA, Footer + Tweaks
    ============================================================ */
 
+// ── Download Button (dynamic — fetches latest release from GitHub) ─────────
+function DownloadButton({ className = "btn btn-ink", label = "Descargar para Windows" }) {
+  const FALLBACK = "https://github.com/Developer545/polaris-releases/releases/latest";
+  const [url, setUrl] = React.useState(FALLBACK);
+  const [version, setVersion] = React.useState(null);
+  React.useEffect(() => {
+    fetch("https://api.github.com/repos/Developer545/polaris-releases/releases/latest")
+      .then(r => r.json())
+      .then(data => {
+        const exe = data.assets?.find(a => a.name.endsWith(".exe"));
+        if (exe) { setUrl(exe.browser_download_url); }
+        if (data.tag_name) { setVersion(data.tag_name); }
+      })
+      .catch(() => {});
+  }, []);
+  return (
+    <a href={url} className={className} download rel="noopener">
+      {label} {version && <span style={{ fontSize: '0.78em', opacity: 0.65 }}>({version})</span>} <span className="arrow">↓</span>
+    </a>
+  );
+}
+
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "palette": "mercurio",
   "showStars": true,
@@ -118,7 +140,7 @@ function Hero() {
             </div>
 
             <div className="hero-cta">
-              <a className="btn btn-ink" href="https://github.com/Developer545/polaris-releases/releases/latest/download/Polaris-Setup-1.0.0.exe" download>Descargar para Windows <span className="arrow">↓</span></a>
+              <DownloadButton />
               <a className="btn btn-ghost" href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener">Abrir versión web <span className="arrow">→</span></a>
             </div>
 
@@ -539,9 +561,7 @@ function CTAFinal() {
         <h2 className="display">Tu negocio, <em>con norte.</em></h2>
         <p>Instalalo en Windows en dos minutos. Configurá tu primera factura DTE antes del café.</p>
         <div className="cta-actions">
-          <a href="https://github.com/Developer545/polaris-releases/releases/latest/download/Polaris-Setup-1.0.0.exe" className="btn btn-ink" download>
-            Descargar para Windows <span className="arrow">↓</span>
-          </a>
+          <DownloadButton />
           <a href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener" className="btn btn-outline">Abrir versión web <span className="arrow">→</span></a>
         </div>
         <div className="post-cta">
