@@ -30,26 +30,44 @@ function DownloadButton({ className = "btn btn-ink", label = "Descargar para Win
 
 // ── Download Button — versión Local (PostgreSQL local) ────
 function LocalDownloadButton({ className = "btn btn-ink", label = "Descargar Polaris Local" }) {
-  const FALLBACK = "https://github.com/Developer545/polaris-releases/releases/latest";
-  const [url, setUrl] = React.useState(FALLBACK);
+  const [url, setUrl]         = React.useState(null);   // null = aún cargando
   const [version, setVersion] = React.useState(null);
-  const [size, setSize] = React.useState(null);
+  const [size, setSize]       = React.useState(null);
+  const [ready, setReady]     = React.useState(false);  // true = asset encontrado
+
   React.useEffect(() => {
     fetch("https://api.github.com/repos/Developer545/polaris-releases/releases/latest")
       .then(r => r.json())
       .then(data => {
-        // Asset local: .exe que contenga "local" en el nombre (Polaris Local-x.x.x-win-x64.exe)
+        // Busca .exe con "local" en el nombre (Polaris-Local-Setup-x.x.x.exe)
         const exe = data.assets?.find(a =>
           a.name.endsWith(".exe") && a.name.toLowerCase().includes("local")
         );
         if (exe) {
           setUrl(exe.browser_download_url);
           setSize(Math.round(exe.size / 1024 / 1024) + ' MB');
+          setReady(true);
+        } else {
+          setReady(false); // sin asset → mostrar "Próximamente"
         }
         if (data.tag_name) { setVersion(data.tag_name); }
       })
-      .catch(() => {});
+      .catch(() => setReady(false));
   }, []);
+
+  // Sin asset local disponible → botón deshabilitado
+  if (!ready) {
+    return (
+      <span
+        className={className}
+        style={{ opacity: 0.5, cursor: 'not-allowed', display: 'inline-flex', alignItems: 'center', gap: 8 }}
+        title="Próximamente disponible"
+      >
+        {label} <span style={{ fontSize: '0.75em' }}>· Próximamente</span>
+      </span>
+    );
+  }
+
   return (
     <a href={url} className={className} download rel="noopener">
       {label}
