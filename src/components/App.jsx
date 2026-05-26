@@ -5,7 +5,7 @@
 import React from 'react';
 import { IndustriesToggle, FeatureTabs, DTECalculator, ModuleBuilder, PACKS } from './Interactive.jsx';
 
-// ── Download Button ────────────────────────────────────────
+// ── Download Button — versión Cloud (Electron online) ─────
 function DownloadButton({ className = "btn btn-ink", label = "Descargar para Windows" }) {
   const FALLBACK = "https://github.com/Developer545/polaris-releases/releases/latest";
   const [url, setUrl] = React.useState(FALLBACK);
@@ -14,7 +14,8 @@ function DownloadButton({ className = "btn btn-ink", label = "Descargar para Win
     fetch("https://api.github.com/repos/Developer545/polaris-releases/releases/latest")
       .then(r => r.json())
       .then(data => {
-        const exe = data.assets?.find(a => a.name.endsWith(".exe"));
+        // Asset online: cualquier .exe que NO tenga "local" en el nombre
+        const exe = data.assets?.find(a => a.name.endsWith(".exe") && !a.name.toLowerCase().includes("local"));
         if (exe) { setUrl(exe.browser_download_url); }
         if (data.tag_name) { setVersion(data.tag_name); }
       })
@@ -23,6 +24,38 @@ function DownloadButton({ className = "btn btn-ink", label = "Descargar para Win
   return (
     <a href={url} className={className} download rel="noopener">
       {label} {version && <span style={{ fontSize: '0.78em', opacity: 0.65 }}>({version})</span>} <span className="arrow">↓</span>
+    </a>
+  );
+}
+
+// ── Download Button — versión Local (PostgreSQL local) ────
+function LocalDownloadButton({ className = "btn btn-ink", label = "Descargar Polaris Local" }) {
+  const FALLBACK = "https://github.com/Developer545/polaris-releases/releases/latest";
+  const [url, setUrl] = React.useState(FALLBACK);
+  const [version, setVersion] = React.useState(null);
+  const [size, setSize] = React.useState(null);
+  React.useEffect(() => {
+    fetch("https://api.github.com/repos/Developer545/polaris-releases/releases/latest")
+      .then(r => r.json())
+      .then(data => {
+        // Asset local: .exe que contenga "local" en el nombre (Polaris Local-x.x.x-win-x64.exe)
+        const exe = data.assets?.find(a =>
+          a.name.endsWith(".exe") && a.name.toLowerCase().includes("local")
+        );
+        if (exe) {
+          setUrl(exe.browser_download_url);
+          setSize(Math.round(exe.size / 1024 / 1024) + ' MB');
+        }
+        if (data.tag_name) { setVersion(data.tag_name); }
+      })
+      .catch(() => {});
+  }, []);
+  return (
+    <a href={url} className={className} download rel="noopener">
+      {label}
+      {version && <span style={{ fontSize: '0.78em', opacity: 0.65 }}> ({version})</span>}
+      {size && <span style={{ fontSize: '0.75em', opacity: 0.55 }}> · {size}</span>}
+      {' '}<span className="arrow">↓</span>
     </a>
   );
 }
@@ -51,7 +84,7 @@ function Nav() {
     document.addEventListener('click', handler);
     return () => document.removeEventListener('click', handler);
   }, [mobileOpen]);
-  const links = [['#producto','Producto'],['#industrias','Industrias'],['#dte','DTE'],['#precios','Precios'],['#faq','FAQ'],['#contacto','Contacto']];
+  const links = [['#producto','Producto'],['#industrias','Industrias'],['#dte','DTE'],['#precios','Precios'],['#descargar','Descargar'],['#contacto','Contacto']];
   return (
     <nav className={'nav' + (scrolled ? ' scrolled' : '')}>
       <div className="nav-inner">
@@ -818,16 +851,118 @@ function Contact() {
   );
 }
 
+// ── Versiones Download ─────────────────────────────────────
+function VersionesDownload() {
+  return (
+    <section className="section" id="descargar">
+      <div className="container">
+        <div className="section-head">
+          <div className="meta">
+            <span className="num">10</span>
+            <span className="label">/ Descarga</span>
+          </div>
+          <div>
+            <h2 className="display">Elegí tu <em>versión.</em></h2>
+            <p className="desc">
+              Dos versiones del mismo software — adaptadas a tu infraestructura. Sin pagar doble, sin cambiar de sistema.
+            </p>
+          </div>
+        </div>
+
+        <div className="version-cards">
+          {/* ── Versión Cloud ───────────────────────────── */}
+          <div className="version-card">
+            <div className="vc-badge cloud">Cloud</div>
+            <div className="vc-name">Polaris <em>Enterprise</em></div>
+            <div className="vc-tagline">Tu POS conectado a la nube de Speeddan</div>
+            <ul className="vc-list">
+              <li><span className="vc-check">✓</span> Acceso desde cualquier PC — sin instalar</li>
+              <li><span className="vc-check">✓</span> BD en la nube — zero mantenimiento</li>
+              <li><span className="vc-check">✓</span> Multi-sucursal sincronizado en tiempo real</li>
+              <li><span className="vc-check">✓</span> Actualizaciones automáticas silenciosas</li>
+              <li><span className="vc-check">✓</span> Soporte técnico incluido</li>
+              <li><span className="vc-neutral">~</span> Requiere internet para funcionar</li>
+            </ul>
+            <div className="vc-note">Ideal para negocios con conexión estable y varias sucursales.</div>
+            <div className="vc-actions">
+              <DownloadButton className="btn btn-ink" label="Descargar para Windows" />
+              <a className="btn btn-ghost" href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener">
+                Abrir versión web <span className="arrow">→</span>
+              </a>
+            </div>
+          </div>
+
+          {/* ── Versión Local ───────────────────────────── */}
+          <div className="version-card local-card">
+            <div className="vc-badge local">Local · Nuevo</div>
+            <div className="vc-name">Polaris <em>Local</em></div>
+            <div className="vc-tagline">Todo en tu PC — sin depender de servidores</div>
+            <ul className="vc-list">
+              <li><span className="vc-check">✓</span> Funciona <strong>100% offline</strong> — BD en tu PC</li>
+              <li><span className="vc-check">✓</span> DTE requiere internet solo al emitir</li>
+              <li><span className="vc-check">✓</span> Pago único de licencia — sin mensualidades</li>
+              <li><span className="vc-check">✓</span> Datos en tu máquina — máxima privacidad</li>
+              <li><span className="vc-check">✓</span> Wizard de instalación guiada en 5 min</li>
+              <li><span className="vc-check">✓</span> Backup automático diario en ZIP local</li>
+            </ul>
+            <div className="vc-note">Ideal para emprendedores individuales sin servidor propio.</div>
+            <div className="vc-actions">
+              <LocalDownloadButton className="btn btn-accent" label="Descargar Polaris Local" />
+              <a className="btn btn-ghost" href="#contacto">
+                Solicitar licencia <span className="arrow">→</span>
+              </a>
+            </div>
+            <div className="vc-req">
+              <strong>Requisitos:</strong> Windows 10/11 · PostgreSQL 14+ · 4 GB RAM · 2 GB espacio
+            </div>
+          </div>
+        </div>
+
+        {/* Tabla comparativa rápida */}
+        <div className="vc-compare">
+          <table className="cmp-table" style={{ marginTop: 40 }}>
+            <thead>
+              <tr>
+                <th className="cmp-feature-col">Característica</th>
+                <th>Enterprise (Cloud)</th>
+                <th className="cmp-polaris-col">Local</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['Base de datos',       'Neon PostgreSQL (nube)',      'PostgreSQL en tu PC'],
+                ['Internet requerido',  'Siempre',                    'Solo al emitir DTE'],
+                ['Precio',             'Por paquetes DTE',            'Licencia única'],
+                ['Multi-sucursal',     '✓ Nativo',                   'Con configuración'],
+                ['Backup',             'Automático en nube',          'ZIP diario local'],
+                ['Módulos premium',    'Incluidos en plan',           'Activados remotamente'],
+                ['Activación',         'Web o descarga',              'Wizard + licencia'],
+              ].map(([feat, cloud, local], i) => (
+                <tr key={i}>
+                  <td className="cmp-feature">{feat}</td>
+                  <td>{cloud}</td>
+                  <td className="cmp-polaris-cell">{local}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ── CTA Final ──────────────────────────────────────────────
 function CTAFinal() {
   return (
-    <section className="cta-final" id="descargar">
+    <section className="cta-final">
       <div className="container cta-final-inner">
         <h2 className="display">Tu negocio, <em>con norte.</em></h2>
-        <p>Instalalo en Windows en dos minutos. Configurá tu primera factura DTE antes del café.</p>
+        <p>Dos versiones. Un solo software. Empezá hoy.</p>
         <div className="cta-actions">
-          <DownloadButton />
-          <a href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener" className="btn btn-outline">Abrir versión web <span className="arrow">→</span></a>
+          <DownloadButton label="Enterprise — Windows" />
+          <LocalDownloadButton className="btn btn-outline" label="Local — Windows" />
+          <a href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener" className="btn btn-ghost">Versión web <span className="arrow">→</span></a>
         </div>
         <div className="post-cta">
           <span>Windows 10 / 11</span>
@@ -935,6 +1070,7 @@ export default function App() {
       <Pricing />
       <Quotes />
       <FAQ />
+      <VersionesDownload />
       <Contact />
       <CTAFinal />
       <Footer />
