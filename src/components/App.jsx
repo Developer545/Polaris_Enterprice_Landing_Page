@@ -5,71 +5,76 @@
 import React from 'react';
 import { IndustriesToggle, FeatureTabs, DTECalculator, ModuleBuilder, PACKS } from './Interactive.jsx';
 
+const RELEASE_API = 'https://api.github.com/repos/Developer545/polaris-releases/releases/latest';
+const RELEASE_PAGE = 'https://github.com/Developer545/polaris-releases/releases/latest';
+const CLOUD_DOWNLOAD_FALLBACK = 'https://github.com/Developer545/polaris-releases/releases/download/v1.0.4/Polaris-Cloud-1.0.4-win-x64.exe';
+const LOCAL_DOWNLOAD_FALLBACK = 'https://github.com/Developer545/polaris-releases/releases/download/v1.0.4/Polaris-Local-1.0.4-win-x64.exe';
+
+let desktopReleasePromise = null;
+
+function loadDesktopRelease() {
+  if (!desktopReleasePromise) {
+    desktopReleasePromise = fetch(RELEASE_API)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`GitHub ${r.status}`))))
+      .catch(() => null);
+  }
+  return desktopReleasePromise;
+}
+
+function formatAssetSize(bytes) {
+  if (!bytes) return null;
+  return `${Math.round(bytes / 1024 / 1024)} MB`;
+}
+
+function useDesktopAsset(kind) {
+  const fallbackUrl = kind === 'local' ? LOCAL_DOWNLOAD_FALLBACK : CLOUD_DOWNLOAD_FALLBACK;
+  const [asset, setAsset] = React.useState({
+    url: fallbackUrl,
+    version: 'v1.0.4',
+    size: null,
+  });
+
+  React.useEffect(() => {
+    let cancelled = false;
+    loadDesktopRelease().then((data) => {
+      if (cancelled || !data) return;
+      const exe = data.assets?.find((candidate) => {
+        const name = candidate.name?.toLowerCase() ?? '';
+        if (!name.endsWith('.exe')) return false;
+        return kind === 'local' ? name.includes('local') : name.includes('cloud') || !name.includes('local');
+      });
+      if (!exe) return;
+      setAsset({
+        url: exe.browser_download_url,
+        version: data.tag_name ?? 'v1.0.4',
+        size: formatAssetSize(exe.size),
+      });
+    });
+    return () => { cancelled = true; };
+  }, [kind]);
+
+  return asset;
+}
+
 // ── Download Button — versión Cloud (Electron online) ─────
 function DownloadButton({ className = "btn btn-ink", label = "Descargar para Windows" }) {
-  const FALLBACK = "https://github.com/Developer545/polaris-releases/releases/latest";
-  const [url, setUrl] = React.useState(FALLBACK);
-  const [version, setVersion] = React.useState(null);
-  React.useEffect(() => {
-    fetch("https://api.github.com/repos/Developer545/polaris-releases/releases/latest")
-      .then(r => r.json())
-      .then(data => {
-        // Asset online: cualquier .exe que NO tenga "local" en el nombre
-        const exe = data.assets?.find(a => a.name.endsWith(".exe") && !a.name.toLowerCase().includes("local"));
-        if (exe) { setUrl(exe.browser_download_url); }
-        if (data.tag_name) { setVersion(data.tag_name); }
-      })
-      .catch(() => {});
-  }, []);
+  const { url, version, size } = useDesktopAsset('cloud');
   return (
-    <a href={url} className={className} download rel="noopener">
-      {label} {version && <span style={{ fontSize: '0.78em', opacity: 0.65 }}>({version})</span>} <span className="arrow">↓</span>
+    <a href={url || RELEASE_PAGE} className={className} download rel="noopener">
+      {label}
+      {version && <span style={{ fontSize: '0.78em', opacity: 0.65 }}> ({version})</span>}
+      {size && <span style={{ fontSize: '0.75em', opacity: 0.55 }}> · {size}</span>}
+      {' '}<span className="arrow">↓</span>
     </a>
   );
 }
 
 // ── Download Button — versión Local (PostgreSQL local) ────
 function LocalDownloadButton({ className = "btn btn-ink", label = "Descargar Polaris Local" }) {
-  const [url, setUrl]         = React.useState(null);   // null = aún cargando
-  const [version, setVersion] = React.useState(null);
-  const [size, setSize]       = React.useState(null);
-  const [ready, setReady]     = React.useState(false);  // true = asset encontrado
-
-  React.useEffect(() => {
-    fetch("https://api.github.com/repos/Developer545/polaris-releases/releases/latest")
-      .then(r => r.json())
-      .then(data => {
-        // Busca .exe con "local" en el nombre (Polaris-Local-Setup-x.x.x.exe)
-        const exe = data.assets?.find(a =>
-          a.name.endsWith(".exe") && a.name.toLowerCase().includes("local")
-        );
-        if (exe) {
-          setUrl(exe.browser_download_url);
-          setSize(Math.round(exe.size / 1024 / 1024) + ' MB');
-          setReady(true);
-        } else {
-          setReady(false); // sin asset → mostrar "Próximamente"
-        }
-        if (data.tag_name) { setVersion(data.tag_name); }
-      })
-      .catch(() => setReady(false));
-  }, []);
-
-  // Sin asset local disponible → botón deshabilitado
-  if (!ready) {
-    return (
-      <span
-        className={className}
-        style={{ opacity: 0.5, cursor: 'not-allowed', display: 'inline-flex', alignItems: 'center', gap: 8 }}
-        title="Próximamente disponible"
-      >
-        {label} <span style={{ fontSize: '0.75em' }}>· Próximamente</span>
-      </span>
-    );
-  }
+  const { url, version, size } = useDesktopAsset('local');
 
   return (
-    <a href={url} className={className} download rel="noopener">
+    <a href={url || RELEASE_PAGE} className={className} download rel="noopener">
       {label}
       {version && <span style={{ fontSize: '0.78em', opacity: 0.65 }}> ({version})</span>}
       {size && <span style={{ fontSize: '0.75em', opacity: 0.55 }}> · {size}</span>}
@@ -183,7 +188,8 @@ function Hero() {
             </div>
 
             <div className="hero-cta">
-              <DownloadButton />
+              <DownloadButton label="Cloud para Windows" />
+              <LocalDownloadButton className="btn btn-outline" label="Local para Windows" />
               <a className="btn btn-ghost" href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener">Abrir versión web <span className="arrow">→</span></a>
             </div>
 
@@ -903,7 +909,7 @@ function VersionesDownload() {
             </ul>
             <div className="vc-note">Ideal para negocios con conexión estable y varias sucursales.</div>
             <div className="vc-actions">
-              <DownloadButton className="btn btn-ink" label="Descargar para Windows" />
+              <DownloadButton className="btn btn-ink" label="Descargar Polaris Cloud" />
               <a className="btn btn-ghost" href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener">
                 Abrir versión web <span className="arrow">→</span>
               </a>
@@ -921,7 +927,7 @@ function VersionesDownload() {
               <li><span className="vc-check">✓</span> Pago único de licencia — sin mensualidades</li>
               <li><span className="vc-check">✓</span> Datos en tu máquina — máxima privacidad</li>
               <li><span className="vc-check">✓</span> Wizard de instalación guiada en 5 min</li>
-              <li><span className="vc-check">✓</span> Backup automático diario en ZIP local</li>
+              <li><span className="vc-check">✓</span> Backups manuales en ZIP local</li>
             </ul>
             <div className="vc-note">Ideal para emprendedores individuales sin servidor propio.</div>
             <div className="vc-actions">
@@ -952,7 +958,7 @@ function VersionesDownload() {
                 ['Internet requerido',  'Siempre',                    'Solo al emitir DTE'],
                 ['Precio',             'Por paquetes DTE',            'Licencia única'],
                 ['Multi-sucursal',     '✓ Nativo',                   'Con configuración'],
-                ['Backup',             'Automático en nube',          'ZIP diario local'],
+                ['Backup',             'Automático en nube',          'ZIP manual local'],
                 ['Módulos premium',    'Incluidos en plan',           'Activados remotamente'],
                 ['Activación',         'Web o descarga',              'Wizard + licencia'],
               ].map(([feat, cloud, local], i) => (
