@@ -117,8 +117,8 @@ function Tilt3D({ children, className = '', intensity = 15, scale = 1.02, style 
 function Float3DShowcase() {
   const screens = [
     { src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80', alt: 'Dashboard analytics', label: 'Panel ejecutivo', delay: 0 },
-    { src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80', alt: 'Business metrics', label: 'Métricas en vivo', delay: 0.15 },
-    { src: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80', alt: 'Team collaboration', label: 'Multi-sucursal', delay: 0.3 },
+    { src: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80', alt: 'Point of sale retail', label: 'Punto de venta', delay: 0.15 },
+    { src: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80', alt: 'Financial reports', label: 'Reportes financieros', delay: 0.3 },
   ];
 
   return (
@@ -133,6 +133,110 @@ function Float3DShowcase() {
         </Tilt3D>
       ))}
     </div>
+  );
+}
+
+// ── Exploded Assembly — 3D scroll-driven build/teardown ───
+function ExplodedAssembly() {
+  return (
+    <section className="exploded-section">
+      <div className="exploded-sticky">
+        <div className="exploded-text">
+          <div className="exploded-eyebrow">
+            <span className="num">✦</span>
+            <span className="label">/ Arquitectura</span>
+          </div>
+          <h2 className="display">Todo se <em>conecta.</em></h2>
+          <p className="exploded-desc">
+            Cada módulo de Polaris encaja como pieza de un sistema unificado.
+            Scrolleá para ver cómo se ensambla tu ERP completo.
+          </p>
+        </div>
+        <div className="exploded-stage">
+          {/* Layer 0: Base frame */}
+          <div className="exploded-piece piece-frame" data-piece="frame">
+            <div className="piece-inner">
+              <div className="piece-chrome">
+                <div className="piece-dots"><span /><span /><span /></div>
+                <span className="piece-url">app.polaris.sv</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Layer 1: Sidebar */}
+          <div className="exploded-piece piece-sidebar" data-piece="sidebar">
+            <div className="piece-inner">
+              <div className="sidebar-logo"><PolarisMark size={14} /></div>
+              <div className="sidebar-item active"><span className="si-icon">▣</span> Panel</div>
+              <div className="sidebar-item"><span className="si-icon">◈</span> POS</div>
+              <div className="sidebar-item"><span className="si-icon">◇</span> DTE</div>
+              <div className="sidebar-item"><span className="si-icon">▤</span> Inventario</div>
+              <div className="sidebar-item"><span className="si-icon">◎</span> CxC</div>
+              <div className="sidebar-item"><span className="si-icon">▥</span> Reportes</div>
+            </div>
+          </div>
+
+          {/* Layer 2: Header bar */}
+          <div className="exploded-piece piece-header" data-piece="header">
+            <div className="piece-inner">
+              <span className="ph-breadcrumb">Panel / Hoy</span>
+              <div className="ph-actions">
+                <span className="ph-btn">Filtrar</span>
+                <span className="ph-btn primary">+ Nueva venta</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Layer 3: KPI cards */}
+          <div className="exploded-piece piece-kpis" data-piece="kpis">
+            <div className="piece-inner">
+              <div className="pk-card">
+                <div className="pk-label">Ventas hoy</div>
+                <div className="pk-value">$2,840</div>
+                <div className="pk-delta up">↑ 12%</div>
+              </div>
+              <div className="pk-card">
+                <div className="pk-label">DTE emitidos</div>
+                <div className="pk-value">34</div>
+                <div className="pk-delta up">↑ 8%</div>
+              </div>
+              <div className="pk-card">
+                <div className="pk-label">Ticket prom.</div>
+                <div className="pk-value">$83.50</div>
+                <div className="pk-delta">= 0%</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Layer 4: Chart */}
+          <div className="exploded-piece piece-chart" data-piece="chart">
+            <div className="piece-inner">
+              <div className="pc-title">Ventas por hora</div>
+              <div className="pc-bars">
+                {[42, 64, 50, 88, 70, 95, 75, 60, 82].map((h, i) => (
+                  <div key={i} className={`pc-bar${h > 80 ? ' hi' : ''}`} style={{ height: `${h}%` }} />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Layer 5: Table */}
+          <div className="exploded-piece piece-table" data-piece="table">
+            <div className="piece-inner">
+              <div className="pt-title">Últimas transacciones</div>
+              <div className="pt-row"><span>DTE-01-00234</span><span className="pt-amount">$245.30</span><span className="pt-ok">✓</span></div>
+              <div className="pt-row"><span>DTE-03-00089</span><span className="pt-amount">$1,820.00</span><span className="pt-ok">✓</span></div>
+              <div className="pt-row"><span>DTE-01-00235</span><span className="pt-amount">$98.75</span><span className="pt-ok">✓</span></div>
+            </div>
+          </div>
+
+          {/* Assembly label overlay */}
+          <div className="exploded-progress">
+            <div className="exploded-progress-bar" />
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -1125,6 +1229,7 @@ export default function App() {
       <Marquee speed={32} />
       <Stats />
       <LogoWall />
+      <ExplodedAssembly />
       <Bento />
       <IndustriesSection />
       <FeaturesSection />

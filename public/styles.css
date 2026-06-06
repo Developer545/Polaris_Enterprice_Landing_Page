@@ -2161,6 +2161,252 @@ h3.display { font-size: clamp(28px, 3.5vw, 44px); }
 /* Comparación rápida */
 .vc-compare { overflow-x: auto; }
 
+/* ── EXPLODED ASSEMBLY ─────────────────────── */
+.exploded-section {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--paper);
+}
+.exploded-sticky {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  align-items: center;
+  gap: 60px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+.exploded-text { z-index: 2; }
+.exploded-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 24px;
+}
+.exploded-eyebrow .num { color: var(--accent); }
+.exploded-section .display { color: var(--paper); }
+.exploded-section .display em { color: var(--accent); }
+.exploded-desc {
+  font-size: 16px; line-height: 1.6; color: rgba(255,255,255,.55);
+  margin-top: 20px; max-width: 400px;
+}
+
+/* ── Stage: 3D perspective container */
+.exploded-stage {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  perspective: 1600px;
+  transform-style: preserve-3d;
+}
+
+/* ── Pieces: each UI component */
+.exploded-piece {
+  position: absolute;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+.piece-inner {
+  background: #1a1a2e;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px -15px rgba(0,0,0,.5);
+}
+
+/* Frame (base window) */
+.piece-frame {
+  inset: 0;
+  z-index: 1;
+}
+.piece-frame .piece-inner {
+  width: 100%; height: 420px;
+  background: #0d0d1a;
+  border-radius: 14px;
+}
+.piece-chrome {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  background: #111128;
+}
+.piece-dots { display: flex; gap: 5px; }
+.piece-dots span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,.12);
+}
+.piece-dots span:first-child { background: #ff5f57; }
+.piece-dots span:nth-child(2) { background: #febc2e; }
+.piece-dots span:nth-child(3) { background: #28c840; }
+.piece-url {
+  font-family: var(--mono); font-size: 10px;
+  color: rgba(255,255,255,.3);
+  padding: 3px 10px; border-radius: 4px;
+  background: rgba(255,255,255,.04);
+}
+
+/* Sidebar */
+.piece-sidebar {
+  left: 0; top: 32px; bottom: 0;
+  width: 52px;
+  z-index: 3;
+}
+.piece-sidebar .piece-inner {
+  width: 52px; height: 388px;
+  padding: 12px 0;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: #111128;
+  border-radius: 0 0 0 14px;
+}
+.sidebar-logo {
+  color: var(--accent); margin-bottom: 12px;
+  padding: 6px;
+}
+.sidebar-item {
+  font-size: 9px; color: rgba(255,255,255,.35);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 6px 4px; border-radius: 6px; width: 44px;
+  text-align: center; cursor: default;
+  transition: background .2s;
+}
+.sidebar-item.active {
+  background: rgba(255,255,255,.06);
+  color: var(--accent);
+}
+.sidebar-item .si-icon { font-size: 14px; }
+
+/* Header */
+.piece-header {
+  top: 32px; left: 52px; right: 0;
+  z-index: 4;
+}
+.piece-header .piece-inner {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 16px;
+  background: #111128;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.ph-breadcrumb {
+  font-family: var(--mono); font-size: 11px;
+  color: rgba(255,255,255,.4);
+}
+.ph-actions { display: flex; gap: 6px; }
+.ph-btn {
+  font-family: var(--mono); font-size: 10px;
+  padding: 4px 10px; border-radius: 5px;
+  color: rgba(255,255,255,.4);
+  border: 1px solid rgba(255,255,255,.08);
+}
+.ph-btn.primary {
+  background: var(--accent); color: white;
+  border-color: var(--accent);
+}
+
+/* KPI cards */
+.piece-kpis {
+  top: 75px; left: 60px; right: 8px;
+  z-index: 5;
+}
+.piece-kpis .piece-inner {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.pk-card {
+  background: #151530;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.pk-label { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,.35); letter-spacing: .04em; }
+.pk-value { font-size: 22px; font-weight: 700; color: white; margin: 4px 0 2px; font-family: var(--sans); }
+.pk-delta { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,.3); }
+.pk-delta.up { color: #28c840; }
+
+/* Chart */
+.piece-chart {
+  top: 185px; left: 60px; width: 55%;
+  z-index: 6;
+}
+.piece-chart .piece-inner {
+  padding: 14px;
+  background: #151530;
+}
+.pc-title {
+  font-family: var(--mono); font-size: 10px;
+  color: rgba(255,255,255,.35); margin-bottom: 12px;
+}
+.pc-bars {
+  display: flex; align-items: flex-end; gap: 6px;
+  height: 100px;
+}
+.pc-bar {
+  flex: 1; background: rgba(255,255,255,.08);
+  border-radius: 3px 3px 0 0;
+  transition: background .3s;
+}
+.pc-bar.hi { background: var(--accent); }
+
+/* Table */
+.piece-table {
+  top: 185px; right: 8px; width: 40%;
+  z-index: 6;
+}
+.piece-table .piece-inner {
+  padding: 14px;
+  background: #151530;
+}
+.pt-title {
+  font-family: var(--mono); font-size: 10px;
+  color: rgba(255,255,255,.35); margin-bottom: 10px;
+}
+.pt-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  font-family: var(--mono); font-size: 11px;
+  color: rgba(255,255,255,.5);
+}
+.pt-row:last-child { border-bottom: none; }
+.pt-amount { margin-left: auto; color: rgba(255,255,255,.7); }
+.pt-ok { color: #28c840; font-size: 12px; }
+
+/* Progress bar */
+.exploded-progress {
+  position: absolute;
+  bottom: -30px; left: 0; right: 0;
+  height: 2px;
+  background: rgba(255,255,255,.06);
+  border-radius: 2px;
+}
+.exploded-progress-bar {
+  height: 100%; width: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+@media (max-width: 900px) {
+  .exploded-sticky {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-top: 80px;
+  }
+  .exploded-stage { height: 320px; }
+  .piece-frame .piece-inner { height: 320px; }
+  .piece-sidebar .piece-inner { height: 288px; }
+  .pk-value { font-size: 16px; }
+  .pc-bars { height: 70px; }
+}
+
 /* ── 3D FLOATING SHOWCASE ──────────────────── */
 .float-3d-showcase {
   display: grid;
