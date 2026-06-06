@@ -512,6 +512,111 @@ function animateChips() {
   });
 }
 
+/* ── Scroll Companion — star that follows entire journey ───── */
+function animateCompanion() {
+  const comp = document.querySelector('.scroll-companion');
+  if (!comp) return;
+
+  const star = comp.querySelector('.sc-star');
+  const shape = comp.querySelector('.sc-shape');
+  const glow = comp.querySelector('.sc-glow');
+  const orbit = comp.querySelector('.sc-orbit');
+  const trail = comp.querySelector('.sc-trail-path');
+  const sats = comp.querySelectorAll('.sc-satellite');
+
+  // Set initial trail stroke for drawing effect
+  if (trail) {
+    const len = trail.getTotalLength();
+    gsap.set(trail, { strokeDasharray: len, strokeDashoffset: len });
+
+    // Draw trail as user scrolls entire page
+    gsap.to(trail, {
+      strokeDashoffset: 0,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: document.body,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1,
+      },
+    });
+  }
+
+  // Continuous slow rotation
+  gsap.to(star, {
+    rotation: 360,
+    duration: 60,
+    repeat: -1,
+    ease: 'none',
+  });
+
+  // Orbit ring counter-rotation
+  gsap.to(orbit, {
+    rotation: -360,
+    duration: 40,
+    repeat: -1,
+    ease: 'none',
+    transformOrigin: '50% 50%',
+  });
+
+  // Satellite orbits
+  sats.forEach((sat, i) => {
+    gsap.to(sat, {
+      rotation: 360,
+      duration: 8 + i * 4,
+      repeat: -1,
+      ease: 'none',
+      transformOrigin: '-20px -20px',
+    });
+  });
+
+  // Phase transitions based on scroll position
+  const sections = [
+    { trigger: '.hero', props: { scale: 1, opacity: 0.6, x: 0, y: 0 } },
+    { trigger: '.stats-section', props: { scale: 1.3, opacity: 0.8 } },
+    { trigger: '.exploded-section', props: { scale: 0.5, opacity: 0.3 } },
+    { trigger: '#producto', props: { scale: 0.7, opacity: 0.5 } },
+    { trigger: '#industrias', props: { scale: 0.9, opacity: 0.6 } },
+    { trigger: '#dte', props: { scale: 0.6, opacity: 0.4 } },
+    { trigger: '#modulos', props: { scale: 1.1, opacity: 0.7 } },
+    { trigger: '#precios', props: { scale: 0.8, opacity: 0.5 } },
+    { trigger: '#faq', props: { scale: 0.6, opacity: 0.3 } },
+    { trigger: '#descargar', props: { scale: 1, opacity: 0.6 } },
+    { trigger: '.cta-final', props: { scale: 1.5, opacity: 0.9 } },
+  ];
+
+  sections.forEach(({ trigger, props }) => {
+    if (!document.querySelector(trigger)) return;
+    gsap.to(star, {
+      ...props,
+      duration: 0.8,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger,
+        start: 'top 60%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+  });
+
+  // Glow pulse on key sections
+  ['.stats-section', '#modulos', '.cta-final'].forEach((trigger) => {
+    if (!document.querySelector(trigger)) return;
+    gsap.to(glow, {
+      opacity: 1,
+      scale: 1.4,
+      duration: 0.6,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger,
+        start: 'top 60%',
+        end: 'bottom 40%',
+        toggleActions: 'play reverse play reverse',
+      },
+    });
+  });
+}
+
 /* ── Nav scroll progress bar ────────────────────────────────── */
 function animateNavProgress() {
   // Create a scroll progress indicator under the nav
@@ -564,6 +669,7 @@ export function useScrollEngine() {
       animateCTAFinal();
       animateFooter();
       animateChips();
+      animateCompanion();
       animateNavProgress();
     });
 

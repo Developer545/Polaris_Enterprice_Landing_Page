@@ -136,6 +136,92 @@ function Float3DShowcase() {
   );
 }
 
+// ── Scroll Companion — Polaris star that follows the journey ──
+function ScrollCompanion() {
+  return (
+    <div className="scroll-companion" aria-hidden>
+      {/* Main star */}
+      <svg className="sc-star" viewBox="0 0 120 120" fill="none">
+        <defs>
+          <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+          </radialGradient>
+          <filter id="starBlur">
+            <feGaussianBlur stdDeviation="3" />
+          </filter>
+        </defs>
+        {/* Glow layer */}
+        <circle className="sc-glow" cx="60" cy="60" r="50" fill="url(#starGlow)" filter="url(#starBlur)" />
+        {/* Star shape */}
+        <path className="sc-shape" d="M60 10 L66 46 L90 26 L74 50 L110 56 L74 62 L90 86 L66 70 L60 106 L54 70 L30 86 L46 62 L10 56 L46 50 L30 26 L54 46 Z"
+          fill="currentColor" />
+        {/* Orbit ring */}
+        <circle className="sc-orbit" cx="60" cy="60" r="55" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 6" fill="none" opacity="0.2" />
+      </svg>
+
+      {/* Satellite dots */}
+      <div className="sc-satellite sc-sat-1" />
+      <div className="sc-satellite sc-sat-2" />
+      <div className="sc-satellite sc-sat-3" />
+
+      {/* Trail line — SVG path that draws itself */}
+      <svg className="sc-trail" viewBox="0 0 100 2000" preserveAspectRatio="none">
+        <path className="sc-trail-path"
+          d="M50 0 C50 200, 80 300, 50 500 C20 700, 80 900, 50 1100 C20 1300, 80 1500, 50 1700 C20 1900, 50 2000, 50 2000"
+          stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="6 8" />
+      </svg>
+    </div>
+  );
+}
+
+// ── Ambient Particles — floating dots throughout page ─────
+function AmbientParticles() {
+  const particles = React.useMemo(() =>
+    Array.from({ length: 30 }, (_, i) => ({
+      id: i,
+      size: 2 + Math.random() * 3,
+      left: Math.random() * 100,
+      delay: Math.random() * 20,
+      duration: 15 + Math.random() * 25,
+      opacity: 0.08 + Math.random() * 0.15,
+    })), []);
+
+  return (
+    <div className="ambient-particles" aria-hidden>
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="amb-particle"
+          style={{
+            width: p.size,
+            height: p.size,
+            left: `${p.left}%`,
+            animationDelay: `${p.delay}s`,
+            animationDuration: `${p.duration}s`,
+            opacity: p.opacity,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ── Section Divider — decorative SVG between sections ─────
+function SectionDivider({ flip = false }) {
+  return (
+    <div className={`section-divider${flip ? ' flip' : ''}`} aria-hidden>
+      <svg viewBox="0 0 1200 80" preserveAspectRatio="none" className="sd-wave">
+        <path d="M0 40 C300 80, 600 0, 900 40 C1050 60, 1150 30, 1200 40 L1200 80 L0 80 Z"
+          fill="currentColor" />
+      </svg>
+      <div className="sd-line">
+        <div className="sd-dot" />
+      </div>
+    </div>
+  );
+}
+
 // ── Exploded Assembly — 3D scroll-driven build/teardown ───
 function ExplodedAssembly() {
   return (
@@ -1224,22 +1310,29 @@ export default function App() {
 
   return (
     <>
+      <ScrollCompanion />
+      <AmbientParticles />
       <Nav />
       <Hero />
       <Marquee speed={32} />
       <Stats />
       <LogoWall />
+      <SectionDivider />
       <ExplodedAssembly />
       <Bento />
+      <SectionDivider flip />
       <IndustriesSection />
       <FeaturesSection />
+      <SectionDivider />
       <Comparison />
       <Modules />
       <ModulePricingSection />
+      <SectionDivider flip />
       <CalculatorSection />
       <Pricing />
       <Quotes />
       <FAQ />
+      <SectionDivider />
       <VersionesDownload />
       <Contact />
       <CTAFinal />

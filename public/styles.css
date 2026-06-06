@@ -1392,6 +1392,132 @@ h3.display { font-size: clamp(28px, 3.5vw, 44px); }
   100% { box-shadow: 0 8px 24px -8px rgba(37,211,102,.55), 0 0 0 0 rgba(37,211,102,0); }
 }
 
+/* ── SCROLL COMPANION ──────────────────────── */
+.scroll-companion {
+  position: fixed;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  pointer-events: none;
+  width: 80px;
+  height: 80px;
+}
+.sc-star {
+  width: 80px;
+  height: 80px;
+  color: var(--accent);
+  opacity: 0.6;
+  filter: drop-shadow(0 0 12px rgba(90,106,29,.3));
+  will-change: transform, opacity;
+}
+.sc-shape {
+  opacity: 0.7;
+}
+.sc-glow {
+  opacity: 0.4;
+  will-change: transform, opacity;
+}
+.sc-orbit {
+  opacity: 0.15;
+}
+
+/* Satellites */
+.sc-satellite {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  top: 50%; left: 50%;
+  opacity: 0.4;
+}
+.sc-sat-1 { box-shadow: 0 0 6px var(--accent); }
+.sc-sat-2 { width: 3px; height: 3px; opacity: 0.3; }
+.sc-sat-3 { width: 2px; height: 2px; opacity: 0.2; }
+
+/* Trail SVG */
+.sc-trail {
+  position: fixed;
+  right: 73px;
+  top: 0;
+  width: 14px;
+  height: 100vh;
+  color: var(--accent);
+  opacity: 0.15;
+  z-index: 49;
+  pointer-events: none;
+}
+.sc-trail-path {
+  stroke-linecap: round;
+}
+
+@media (max-width: 1100px) {
+  .scroll-companion { display: none; }
+  .sc-trail { display: none; }
+}
+
+/* ── AMBIENT PARTICLES ─────────────────────── */
+.ambient-particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.amb-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--accent);
+  bottom: -10px;
+  animation: particleRise linear infinite;
+}
+@keyframes particleRise {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% {
+    transform: translateY(-100vh) translateX(30px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* ── SECTION DIVIDERS ──────────────────────── */
+.section-divider {
+  position: relative;
+  height: 60px;
+  overflow: hidden;
+  color: var(--feature);
+}
+.section-divider.flip {
+  transform: scaleY(-1);
+}
+.sd-wave {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  height: 60px;
+}
+.sd-line {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 1px;
+  background: var(--line);
+}
+.sd-dot {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(90,106,29,.4);
+}
+
 /* ── GSAP SCROLL ENGINE ────────────────────── */
 /* Elements start invisible — GSAP handles reveal */
 .section-head .num,
