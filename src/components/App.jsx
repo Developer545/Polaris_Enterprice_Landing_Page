@@ -3,7 +3,9 @@
    Pricing, Quotes, Contact, CTA, Footer
    ============================================================ */
 import React from 'react';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { IndustriesToggle, FeatureTabs, DTECalculator, ModuleBuilder, PACKS } from './Interactive.jsx';
+import { useScrollEngine } from './ScrollEngine.jsx';
 
 const RELEASE_API = 'https://api.github.com/repos/Developer545/polaris-releases/releases/latest';
 const RELEASE_PAGE = 'https://github.com/Developer545/polaris-releases/releases/latest';
@@ -80,6 +82,57 @@ function LocalDownloadButton({ className = "btn btn-ink", label = "Descargar Pol
       {size && <span style={{ fontSize: '0.75em', opacity: 0.55 }}> · {size}</span>}
       {' '}<span className="arrow">↓</span>
     </a>
+  );
+}
+
+// ── 3D Tilt Card — interactive mouse-follow perspective ────
+function Tilt3D({ children, className = '', intensity = 15, scale = 1.02, style = {} }) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [intensity, -intensity]), { stiffness: 200, damping: 20 });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-intensity, intensity]), { stiffness: 200, damping: 20 });
+
+  function handleMouse(e) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    x.set((e.clientX - rect.left) / rect.width - 0.5);
+    y.set((e.clientY - rect.top) / rect.height - 0.5);
+  }
+  function handleLeave() { x.set(0); y.set(0); }
+
+  return (
+    <motion.div
+      className={className}
+      style={{ ...style, rotateX, rotateY, transformStyle: 'preserve-3d', perspective: 1000 }}
+      onMouseMove={handleMouse}
+      onMouseLeave={handleLeave}
+      whileHover={{ scale }}
+      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// ── Floating 3D showcase images ───────────────────────────
+function Float3DShowcase() {
+  const screens = [
+    { src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80', alt: 'Dashboard analytics', label: 'Panel ejecutivo', delay: 0 },
+    { src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80', alt: 'Business metrics', label: 'Métricas en vivo', delay: 0.15 },
+    { src: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80', alt: 'Team collaboration', label: 'Multi-sucursal', delay: 0.3 },
+  ];
+
+  return (
+    <div className="float-3d-showcase">
+      {screens.map((s, i) => (
+        <Tilt3D key={i} className="float-3d-card" intensity={12} scale={1.04}>
+          <div className="float-3d-inner" style={{ animationDelay: `${s.delay}s` }}>
+            <img src={s.src} alt={s.alt} loading="lazy" />
+            <div className="float-3d-label">{s.label}</div>
+            <div className="float-3d-shine" />
+          </div>
+        </Tilt3D>
+      ))}
+    </div>
   );
 }
 
@@ -207,6 +260,7 @@ function Hero() {
           </div>
 
           <div style={{ position: 'relative' }}>
+            <Tilt3D className="mockup-tilt-wrap" intensity={8} scale={1.01}>
             <div className="mockup-frame float">
               <div className="mockup-chrome">
                 <div className="dots"><span></span><span></span><span></span></div>
@@ -280,15 +334,22 @@ function Hero() {
               </div>
             </div>
 
+            </Tilt3D>
             <div className="mockup-tickets">
               {tickets.slice(0, 1 + (tick % 3)).map((t, i) => (
-                <div className="ticket" key={tick + '-' + i} style={{ animationDelay: `${i * .15}s` }}>
+                <motion.div
+                  className="ticket"
+                  key={tick + '-' + i}
+                  initial={{ opacity: 0, x: 40, scale: 0.9 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  transition={{ delay: i * 0.15, type: 'spring', stiffness: 260, damping: 20 }}
+                >
                   <div className="tk-icon">✓</div>
                   <div className="tk-body">
                     <div className="tk-id">{t.id}</div>
                     <div className="tk-total">{t.total}</div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -501,6 +562,8 @@ function Bento() {
             </div>
           </div>
         </div>
+
+        <Float3DShowcase />
       </div>
     </section>
   );
@@ -1049,33 +1112,11 @@ function Footer() {
   );
 }
 
-// ── Reveal observer ────────────────────────────────────────
-function useReveal() {
-  React.useEffect(() => {
-    const els = document.querySelectorAll('.section, .marquee-wrap, .quote-card, .module-tile, .bento-cell, .pack');
-    els.forEach((el) => el.classList.add('reveal'));
-    requestAnimationFrame(() => {
-      els.forEach((el) => {
-        const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('visible');
-      });
-    });
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          obs.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
-    els.forEach((el) => { if (!el.classList.contains('visible')) obs.observe(el); });
-    return () => obs.disconnect();
-  }, []);
-}
+// ── Reveal observer (legacy — now powered by GSAP ScrollEngine) ──
 
 // ── App ────────────────────────────────────────────────────
 export default function App() {
-  useReveal();
+  useScrollEngine();
 
   return (
     <>
