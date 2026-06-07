@@ -802,9 +802,6 @@ function Stats() {
   ];
   return (
     <div className="stats-section" ref={ref}>
-      <div className="stats-bg" aria-hidden="true">
-        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=50" alt="" loading="lazy" />
-      </div>
       <div className="container">
         <div className="stats-grid">
           {stats.map((s, i) => (

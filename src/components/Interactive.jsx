@@ -120,6 +120,11 @@ export function IndustriesToggle() {
             className={'industry-tab' + (i === active ? ' active' : '')}
             onClick={() => switchIndustry(i)}
           >
+            {ind.photo && (
+              <span className="ind-thumb">
+                <img src={ind.photo} alt="" loading="lazy" />
+              </span>
+            )}
             <span className="ind-num">/{ind.num}</span>
             <span className="ind-name">{ind.name}</span>
             <span className="ind-arrow">→</span>
@@ -133,12 +138,6 @@ export function IndustriesToggle() {
           <div className="url">{current.url}</div>
           <span className="kicker" style={{ fontSize: 10 }}>{current.tag}</span>
         </div>
-        {current.photo && (
-          <div className="industry-photo-header">
-            <img src={current.photo} alt={current.name} loading="lazy" />
-            <div className="iph-label">{current.name}</div>
-          </div>
-        )}
         <div className="screen-body">
           <div className="screen-products">
             {current.products.map((p) => {

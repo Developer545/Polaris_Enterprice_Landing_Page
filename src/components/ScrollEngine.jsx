@@ -88,7 +88,7 @@ function animateMarquee() {
     scrollTrigger: {
       trigger: '.marquee-wrap',
       start: 'top 90%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -197,7 +197,7 @@ function animateStats() {
     scrollTrigger: {
       trigger: '.stats-section',
       start: 'top 80%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -217,7 +217,7 @@ function animateLogoWall() {
     scrollTrigger: {
       trigger: '.logo-wall',
       start: 'top 85%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -229,7 +229,7 @@ function animateSectionHeads() {
       scrollTrigger: {
         trigger: head,
         start: 'top 82%',
-        toggleActions: 'play none none none',
+        toggleActions: 'play reverse play reverse',
       },
     });
 
@@ -263,7 +263,7 @@ function animateBento() {
     scrollTrigger: {
       trigger: '.bento',
       start: 'top 80%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -286,7 +286,7 @@ function animate3DShowcase() {
     scrollTrigger: {
       trigger: '.float-3d-showcase',
       start: 'top 85%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -307,7 +307,7 @@ function animateModules() {
     scrollTrigger: {
       trigger: '.modules-grid',
       start: 'top 82%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -328,7 +328,7 @@ function animatePricing() {
     scrollTrigger: {
       trigger: '.pricing-grid',
       start: 'top 82%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -350,7 +350,7 @@ function animateQuotes() {
       scrollTrigger: {
         trigger: card,
         start: 'top 85%',
-        toggleActions: 'play none none none',
+        toggleActions: 'play reverse play reverse',
       },
     });
   });
@@ -373,7 +373,7 @@ function animateComparison() {
     scrollTrigger: {
       trigger: '.cmp-table',
       start: 'top 82%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -394,7 +394,7 @@ function animateFAQ() {
     scrollTrigger: {
       trigger: '.faq-list',
       start: 'top 82%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -417,7 +417,7 @@ function animateContact() {
     scrollTrigger: {
       trigger: '.contact-grid',
       start: 'top 85%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -441,7 +441,7 @@ function animateVersionCards() {
       scrollTrigger: {
         trigger: card,
         start: 'top 85%',
-        toggleActions: 'play none none none',
+        toggleActions: 'play reverse play reverse',
       },
     });
   });
@@ -453,7 +453,7 @@ function animateCTAFinal() {
     scrollTrigger: {
       trigger: '.cta-final',
       start: 'top 80%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 
@@ -487,7 +487,7 @@ function animateFooter() {
     scrollTrigger: {
       trigger: '.footer',
       start: 'top 90%',
-      toggleActions: 'play none none none',
+      toggleActions: 'play reverse play reverse',
     },
   });
 }
@@ -506,7 +506,7 @@ function animateChips() {
       scrollTrigger: {
         trigger: row,
         start: 'top 88%',
-        toggleActions: 'play none none none',
+        toggleActions: 'play reverse play reverse',
       },
     });
   });
