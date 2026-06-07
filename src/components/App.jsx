@@ -355,14 +355,14 @@ function GrainOverlay() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     // Small buffer → stretched by CSS → organic filmic grain
-    canvas.width = 200;
-    canvas.height = 150;
+    canvas.width = 80;
+    canvas.height = 80;
     let animId;
     let lastTime = 0;
 
     function draw(time) {
       animId = requestAnimationFrame(draw);
-      if (time - lastTime < 52) return; // ~19fps
+      if (time - lastTime < 42) return; // ~24fps
       lastTime = time;
       const { width: w, height: h } = canvas;
       const imageData = ctx.createImageData(w, h);
@@ -464,9 +464,9 @@ function PlanetCompanion() {
     const onMove = (e) => {
       const dx = e.clientX - prevX;
       prevX = e.clientX;
-      // Planet trails 60px behind and above cursor so it doesn't block it
-      mX.set(e.clientX + 60);
-      mY.set(e.clientY - 60);
+      // Planet trails behind/above cursor — offset para planeta 160px
+      mX.set(e.clientX + 110);
+      mY.set(e.clientY - 110);
       rotateZ.set(Math.max(-18, Math.min(18, dx * 0.7)));
       if (!show) setShow(true);
     };
