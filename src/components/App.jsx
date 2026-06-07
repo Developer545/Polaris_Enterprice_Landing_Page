@@ -336,6 +336,17 @@ function PolarisMark({ size = 22 }) {
 }
 
 // ── Grain Overlay — animated canvas film grain ─────────────
+// ── Aurora Orbs — animated gradient blobs in hero ─────────
+function AuroraOrbs() {
+  return (
+    <div className="aurora-orbs" aria-hidden="true">
+      <div className="aurora-orb ao-1" />
+      <div className="aurora-orb ao-2" />
+      <div className="aurora-orb ao-3" />
+    </div>
+  );
+}
+
 function GrainOverlay() {
   const canvasRef = React.useRef(null);
 
@@ -580,6 +591,7 @@ function Hero() {
 
   return (
     <header className="hero">
+      <AuroraOrbs />
       <div className="container">
         <div className="hero-grid">
           <div>
@@ -790,6 +802,9 @@ function Stats() {
   ];
   return (
     <div className="stats-section" ref={ref}>
+      <div className="stats-bg" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=50" alt="" loading="lazy" />
+      </div>
       <div className="container">
         <div className="stats-grid">
           {stats.map((s, i) => (
@@ -860,6 +875,9 @@ function Bento() {
 
         <div className="bento">
           <div className="bento-cell span-4 dark">
+            <div className="bento-bg-img" aria-hidden="true">
+              <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&q=60" alt="" loading="lazy" />
+            </div>
             <div>
               <div className="glyph">A — Punto de venta</div>
               <h3 className="cell-title">Caja registradora <em>que no te frena.</em></h3>
@@ -1184,9 +1202,9 @@ function Pricing() {
 // ── Quotes ─────────────────────────────────────────────────
 function Quotes() {
   const quotes = [
-    { q: 'Pasamos de facturar a mano a emitir 80 DTE al día sin contratar más gente.', name: 'Roberto V.', role: 'Ferretería · San Salvador' },
-    { q: 'El cierre de mes lo hacíamos en 3 días. Ahora lo hago el último domingo en una hora.', name: 'Carla M.', role: 'Restaurante · Santa Tecla' },
-    { q: 'Tengo 4 sucursales y los veo todos desde el mismo panel. Antes era un caos de Excels.', name: 'Mario H.', role: 'Distribuidora · Sonsonate' },
+    { q: 'Pasamos de facturar a mano a emitir 80 DTE al día sin contratar más gente.', name: 'Roberto V.', role: 'Ferretería · San Salvador', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&q=80' },
+    { q: 'El cierre de mes lo hacíamos en 3 días. Ahora lo hago el último domingo en una hora.', name: 'Carla M.', role: 'Restaurante · Santa Tecla', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&q=80' },
+    { q: 'Tengo 4 sucursales y los veo todos desde el mismo panel. Antes era un caos de Excels.', name: 'Mario H.', role: 'Distribuidora · Sonsonate', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&q=80' },
   ];
   return (
     <section className="section">
@@ -1207,7 +1225,9 @@ function Quotes() {
               <div className="q-mark">"</div>
               <blockquote>{qq.q}</blockquote>
               <div className="q-by">
-                <div className="q-avatar">{qq.name[0]}</div>
+                <div className="q-avatar">
+                  {qq.img ? <img src={qq.img} alt={qq.name} loading="lazy" /> : qq.name[0]}
+                </div>
                 <div>
                   <div className="q-name">{qq.name}</div>
                   <div className="q-role">{qq.role}</div>

@@ -12,6 +12,7 @@ const INDUSTRIES = [
     name: 'Tiendas & Retail',
     tag: 'Comercio',
     url: 'app.polarisenterprise.com/caja',
+    photo: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=700&q=65',
     products: [
       { emoji: '🍫', name: 'Chocolate Diana 80g', price: 1.25 },
       { emoji: '🥤', name: 'Coca-Cola 600ml', price: 1.10 },
@@ -27,6 +28,7 @@ const INDUSTRIES = [
     name: 'Restaurantes',
     tag: 'Gastronomía',
     url: 'app.polarisenterprise.com/mesas',
+    photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=65',
     products: [
       { emoji: '🫓', name: 'Pupusa de queso', price: 0.75 },
       { emoji: '🌮', name: 'Tacos al pastor (3)', price: 3.50 },
@@ -42,6 +44,7 @@ const INDUSTRIES = [
     name: 'Distribuidoras',
     tag: 'Distribución',
     url: 'app.polarisenterprise.com/orden',
+    photo: 'https://images.unsplash.com/photo-1553413077-190dd305871c?w=700&q=65',
     products: [
       { emoji: '📦', name: 'Caja agua x24', price: 8.40 },
       { emoji: '🛢️', name: 'Aceite Capullo 1L', price: 3.95 },
@@ -57,6 +60,7 @@ const INDUSTRIES = [
     name: 'Servicios',
     tag: 'B2B & profesional',
     url: 'app.polarisenterprise.com/facturar',
+    photo: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=700&q=65',
     products: [
       { emoji: '💼', name: 'Consultoría hora', price: 45.00 },
       { emoji: '🔧', name: 'Mantenimiento PC', price: 25.00 },
@@ -129,6 +133,12 @@ export function IndustriesToggle() {
           <div className="url">{current.url}</div>
           <span className="kicker" style={{ fontSize: 10 }}>{current.tag}</span>
         </div>
+        {current.photo && (
+          <div className="industry-photo-header">
+            <img src={current.photo} alt={current.name} loading="lazy" />
+            <div className="iph-label">{current.name}</div>
+          </div>
+        )}
         <div className="screen-body">
           <div className="screen-products">
             {current.products.map((p) => {

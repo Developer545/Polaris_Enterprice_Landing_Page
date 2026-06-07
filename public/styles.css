@@ -32,18 +32,18 @@
   --hairline: 1px solid var(--line);
 }
 
-/* Palette: Mercurio — cool minimal white */
+/* Palette: Mercurio — warm editorial white */
 .pal-mercurio {
-  --canvas: #fafafb;
-  --paper:  #ffffff;
-  --feature:#f1f1f6;
-  --feature-2:#e7e7ee;
+  --canvas: #f4f2ee;
+  --paper:  #fefefe;
+  --feature:#eceae5;
+  --feature-2:#e4e0da;
   --ink:    #0a0a0c;
   --ink-2:  #2e2e34;
   --ink-3:  #6c6c75;
   --ink-4:  #a8a8b0;
-  --line:   #e6e6ea;
-  --line-2: #f1f1f4;
+  --line:   #dedad4;
+  --line-2: #eae7e2;
   --accent: #2024d6;
   --accent-2: #d65420;
   --warm:   #d6a824;
@@ -2889,4 +2889,224 @@ body { transition: background-color .45s ease, color .45s ease; }
 }
 @media (max-width: 900px) {
   .planet-companion { display: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PREMIUM VISUAL UPGRADES
+   Aurora orbs · Real photos · Dark glows · Warm light mode
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── AURORA ORBS ─────────────────────────────────────────── */
+.aurora-orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: auroraFloat 14s ease-in-out infinite;
+  will-change: transform;
+}
+
+.ao-1 {
+  width: 600px; height: 450px;
+  background: radial-gradient(circle, rgba(32,36,214,.11) 0%, transparent 68%);
+  top: -130px; right: -80px;
+  animation-delay: 0s;
+}
+.ao-2 {
+  width: 420px; height: 320px;
+  background: radial-gradient(circle, rgba(214,84,32,.08) 0%, transparent 68%);
+  top: 20px; right: 260px;
+  animation-delay: -5s;
+  animation-duration: 10s;
+}
+.ao-3 {
+  width: 340px; height: 260px;
+  background: radial-gradient(circle, rgba(32,36,214,.06) 0%, transparent 68%);
+  bottom: -50px; left: 4%;
+  animation-delay: -9s;
+  animation-duration: 17s;
+}
+
+.pal-noche .ao-1 {
+  background: radial-gradient(circle, rgba(85,119,255,.22) 0%, transparent 68%);
+}
+.pal-noche .ao-2 {
+  background: radial-gradient(circle, rgba(255,107,64,.15) 0%, transparent 68%);
+}
+.pal-noche .ao-3 {
+  background: radial-gradient(circle, rgba(85,119,255,.13) 0%, transparent 68%);
+}
+
+@keyframes auroraFloat {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  25%       { transform: translate(28px, -22px) scale(1.07); }
+  50%       { transform: translate(-14px, 14px) scale(0.93); }
+  75%       { transform: translate(18px, 8px) scale(1.04); }
+}
+
+/* Hero needs relative positioning for orbs */
+.hero { position: relative; overflow: hidden; }
+.hero .container { position: relative; z-index: 1; }
+
+/* ── STATS BACKGROUND PHOTO ──────────────────────────────── */
+.stats-section { position: relative; overflow: hidden; }
+.stats-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.stats-bg img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: saturate(0.15) contrast(1.1);
+  opacity: 0.07;
+}
+.pal-noche .stats-bg img { opacity: 0.05; filter: saturate(0) contrast(1.2); }
+.stats-section .container { position: relative; z-index: 1; }
+
+/* ── BENTO DARK CELL PHOTO ───────────────────────────────── */
+.bento-cell { position: relative; overflow: hidden; }
+.bento-bg-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.bento-bg-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0.10;
+  filter: saturate(0) contrast(1.2);
+  transition: opacity .5s;
+}
+.bento-cell.dark:hover .bento-bg-img img { opacity: 0.18; }
+.bento-cell > *:not(.bento-bg-img) { position: relative; z-index: 1; }
+
+/* ── QUOTE AVATAR PHOTOS ─────────────────────────────────── */
+.q-avatar { overflow: hidden; }
+.q-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+/* ── GRADIENT PRIMARY BUTTON ─────────────────────────────── */
+.btn-ink {
+  background: linear-gradient(135deg, var(--accent) 0%, color-mix(in oklab, var(--accent) 78%, #000028) 100%);
+  border-color: transparent;
+}
+.btn-ink:hover {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 88%, #fff) 0%, color-mix(in oklab, var(--accent) 60%, #000) 100%);
+  transform: translateY(-1px);
+  border-color: transparent;
+}
+
+/* ── BETTER LIGHT MODE SHADOWS ───────────────────────────── */
+.bento-cell {
+  box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.05);
+}
+.quote-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+}
+.version-card {
+  box-shadow: 0 2px 6px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.06);
+}
+
+/* ── DARK MODE CARD GLOWS (Linear.app style) ─────────────── */
+.pal-noche .bento-cell { border-color: rgba(255,255,255,.05); }
+.pal-noche .bento-cell:hover {
+  background: color-mix(in oklab, var(--accent) 7%, var(--paper));
+  border-color: rgba(85,119,255,.18);
+  box-shadow: 0 0 0 1px rgba(85,119,255,.1), 0 8px 32px rgba(85,119,255,.08);
+}
+
+.pal-noche .module-tile { border-color: rgba(255,255,255,.05); }
+.pal-noche .module-tile:hover {
+  background: color-mix(in oklab, var(--accent) 5%, var(--paper));
+  border-color: rgba(85,119,255,.16);
+  box-shadow: 0 0 0 1px rgba(85,119,255,.08), 0 4px 20px rgba(85,119,255,.07);
+}
+
+.pal-noche .logo-tile { border-color: rgba(255,255,255,.06); }
+.pal-noche .logo-tile:hover {
+  border-color: rgba(85,119,255,.35);
+  box-shadow: 0 0 12px rgba(85,119,255,.14);
+}
+
+.pal-noche .quote-card { border-color: rgba(255,255,255,.05); }
+.pal-noche .quote-card:hover {
+  border-color: rgba(85,119,255,.18);
+  box-shadow: 0 0 0 1px rgba(85,119,255,.1), 0 8px 28px rgba(85,119,255,.07);
+}
+
+.pal-noche .version-card { border-color: rgba(255,255,255,.06); }
+.pal-noche .version-card:hover {
+  border-color: rgba(85,119,255,.24);
+  box-shadow: 0 0 0 1px rgba(85,119,255,.14), 0 8px 40px rgba(85,119,255,.1);
+}
+
+.pal-noche .pack:hover {
+  border-color: rgba(85,119,255,.2);
+  box-shadow: 0 0 0 1px rgba(85,119,255,.1), 0 4px 20px rgba(85,119,255,.08);
+}
+
+.pal-noche .contact-card:hover {
+  box-shadow: 0 0 0 1px rgba(85,119,255,.18), 0 8px 40px rgba(85,119,255,.1);
+}
+
+/* Better dark nav on scroll */
+.pal-noche .nav.scrolled {
+  border-bottom-color: rgba(85,119,255,.14);
+  background: color-mix(in oklab, var(--canvas) 82%, transparent);
+}
+
+/* Enhanced dark mode CTA aurora */
+.pal-noche .cta-final::before {
+  background-image:
+    radial-gradient(ellipse 62% 52% at 50% 100%, rgba(85,119,255,.3), transparent 68%),
+    radial-gradient(ellipse 36% 28% at 78% 18%, rgba(255,107,64,.18), transparent 60%);
+}
+
+/* ── INDUSTRY PHOTO HEADER ───────────────────────────────── */
+.industry-photo-header {
+  position: relative;
+  height: 100px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.industry-photo-header img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: saturate(0.6) contrast(1.1);
+  transition: transform .6s ease;
+}
+.industry-photo-header:hover img { transform: scale(1.04); }
+.industry-photo-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(0,0,0,.25) 0%,
+    transparent 40%,
+    var(--canvas) 100%
+  );
+}
+.iph-label {
+  position: absolute;
+  bottom: 10px; left: 14px;
+  z-index: 1;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.85);
+  text-shadow: 0 1px 4px rgba(0,0,0,.5);
 }
