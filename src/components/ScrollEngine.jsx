@@ -240,7 +240,7 @@ function animateSectionHeads() {
 
     if (num) tl.fromTo(num, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.4 });
     if (label) tl.fromTo(label, { opacity: 0, x: -15 }, { opacity: 1, x: 0, duration: 0.3 }, '-=0.2');
-    if (display) tl.fromTo(display, { opacity: 0, y: 40, clipPath: 'inset(0 0 100% 0)' }, { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', duration: 0.8, ease: 'power3.out' }, '-=0.1');
+    if (display) tl.fromTo(display, { opacity: 0, y: 40, clipPath: 'inset(0 0 100% 0)', filter: 'blur(10px)' }, { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', filter: 'blur(0px)', duration: 0.8, ease: 'power3.out' }, '-=0.1');
     if (desc) tl.fromTo(desc, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5 }, '-=0.3');
   });
 }
@@ -638,6 +638,41 @@ function animateNavProgress() {
   }
 }
 
+/* ── Magnetic hover — cards attract toward mouse ─────────────── */
+function animateMagnetic() {
+  const els = document.querySelectorAll(
+    '.logo-tile, .bento-cell, .module-tile, .pack, .contact-card, .version-card, .quote-card'
+  );
+
+  els.forEach((el) => {
+    el.addEventListener('mousemove', (e) => {
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (e.clientX - cx) / (rect.width / 2);
+      const dy = (e.clientY - cy) / (rect.height / 2);
+      gsap.to(el, {
+        x: dx * 6,
+        y: dy * 5,
+        rotateX: -dy * 2.5,
+        rotateY: dx * 2.5,
+        duration: 0.35,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      });
+    });
+
+    el.addEventListener('mouseleave', () => {
+      gsap.to(el, {
+        x: 0, y: 0, rotateX: 0, rotateY: 0,
+        duration: 0.65,
+        ease: 'elastic.out(1, 0.45)',
+        overwrite: 'auto',
+      });
+    });
+  });
+}
+
 /* ── MAIN HOOK — useScrollEngine ────────────────────────────── */
 export function useScrollEngine() {
   const initialized = useRef(false);
@@ -671,6 +706,7 @@ export function useScrollEngine() {
       animateChips();
       animateCompanion();
       animateNavProgress();
+      animateMagnetic();
     });
 
     return () => {

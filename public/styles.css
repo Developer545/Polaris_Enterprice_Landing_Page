@@ -2628,3 +2628,265 @@ h3.display { font-size: clamp(28px, 3.5vw, 44px); }
   .version-cards { grid-template-columns: 1fr; }
   .vc-actions .btn { width: 100%; justify-content: center; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   BLUEYARD-INSPIRED EFFECTS
+   Film grain · Planet companion · Custom cursor · Dark mode
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── THEME TRANSITION ─────────────────────────────────────── */
+html { transition: background-color .45s ease; }
+body { transition: background-color .45s ease, color .45s ease; }
+.nav, .hero, .marquee-wrap, .stats-section, .logo-wall,
+.section, .footer, .cta-final, .bento-cell, .module-tile,
+.pack, .quote-card, .contact-card, .version-card,
+.calc-input-card, .calc-summary-card, .pricing-banner,
+.mb-summary, .mockup-frame, .industry-screen, .feature-mockup {
+  transition: background-color .45s ease, border-color .45s ease, color .45s ease;
+}
+
+/* ── DARK PALETTE ─────────────────────────────────────────── */
+.pal-noche {
+  --canvas:    #07070e;
+  --paper:     #0c0c19;
+  --feature:   #101022;
+  --feature-2: #14142c;
+  --ink:       #eeeef6;
+  --ink-2:     #adadcc;
+  --ink-3:     #5858a0;
+  --ink-4:     #2e2e60;
+  --line:      #1c1c38;
+  --line-2:    #141430;
+  --accent:    #5577ff;
+  --accent-2:  #ff6b40;
+  --warm:      #ffcd50;
+  --success:   #3dba6e;
+  --danger:    #ff4444;
+  --radius:    6px;
+  --radius-lg: 14px;
+  --hairline:  1px solid var(--line);
+}
+.pal-noche body { background: var(--canvas); color: var(--ink); }
+.pal-noche .nav { background: color-mix(in oklab, var(--canvas) 88%, transparent); }
+.pal-noche .local-card { background: linear-gradient(135deg, #100d08, var(--paper)); }
+.pal-noche .exploded-section { background: var(--canvas); }
+.pal-noche .piece-inner { background: #0c0c20; border-color: rgba(255,255,255,.06); }
+.pal-noche .piece-frame .piece-inner { background: #08081a; }
+.pal-noche .piece-chrome,
+.pal-noche .piece-sidebar .piece-inner,
+.pal-noche .piece-header .piece-inner { background: #0d0d22; }
+.pal-noche .pk-card,
+.pal-noche .piece-chart .piece-inner,
+.pal-noche .piece-table .piece-inner { background: #111130; }
+.pal-noche .vc-badge.cloud { background: #0d2060; color: #8ab0ff; }
+.pal-noche .vc-badge.local { background: #200c00; color: var(--accent-2); border-color: var(--accent-2); }
+.pal-noche .hero::before { opacity: .4; }
+.pal-noche .cta-final::after { opacity: .2; }
+.pal-noche .mk-bar.hi { background: var(--accent); }
+.pal-noche .mk-bar.warm { background: var(--accent-2); }
+
+/* ── GRAIN OVERLAY ────────────────────────────────────────── */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  width: 100vw;
+  height: 100vh;
+  mix-blend-mode: overlay;
+  opacity: 0.28;
+  display: block;
+}
+.pal-noche .grain-overlay { opacity: 0.14; }
+
+/* ── CUSTOM CURSOR ────────────────────────────────────────── */
+@media (hover: hover) and (pointer: fine) {
+  *, *::before, *::after { cursor: none !important; }
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 99998;
+  pointer-events: none;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  mix-blend-mode: difference;
+  will-change: transform, opacity;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 99997;
+  pointer-events: none;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  mix-blend-mode: difference;
+  will-change: transform, opacity;
+}
+
+/* ── PLANET COMPANION ─────────────────────────────────────── */
+.planet-companion {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 5;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.planet-wrap {
+  position: relative;
+  width: 68px; height: 68px;
+  transform: translate(-50%, -50%);
+}
+
+.planet-sphere {
+  position: absolute;
+  top: 0; left: 0;
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(200,225,255,.55) 0%, transparent 42%),
+    radial-gradient(circle at 68% 68%, rgba(10,5,50,.9) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, #3a5aff 0%, #1a2cb0 45%, #060820 100%);
+  box-shadow:
+    inset -6px -6px 16px rgba(0,0,0,.7),
+    inset 3px 3px 10px rgba(180,210,255,.12),
+    0 0 28px rgba(70,110,255,.6),
+    0 0 55px rgba(70,110,255,.3),
+    0 0 90px rgba(70,110,255,.12);
+  z-index: 2;
+  overflow: hidden;
+}
+
+.planet-bands {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0%, transparent 22%,
+    rgba(255,255,255,.025) 22%, rgba(255,255,255,.025) 26%,
+    transparent 26%, transparent 48%,
+    rgba(255,255,255,.018) 48%, rgba(255,255,255,.018) 52%
+  );
+}
+
+.planet-highlight {
+  position: absolute;
+  top: 10%; left: 14%;
+  width: 36%; height: 26%;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  filter: blur(5px);
+}
+
+.planet-shadow-cast {
+  position: absolute;
+  top: 0; right: -3px;
+  width: 52%; height: 100%;
+  border-radius: 0 50% 50% 0;
+  background: rgba(0,0,12,.5);
+  filter: blur(5px);
+}
+
+.planet-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 130px; height: 20px;
+  margin: -10px 0 0 -65px;
+  border-radius: 50%;
+}
+
+.planet-ring-behind {
+  z-index: 1;
+  border-top: 8px solid rgba(180,205,255,.22);
+  border-bottom: 8px solid transparent;
+  border-left: 4px solid rgba(180,205,255,.12);
+  border-right: 4px solid rgba(180,205,255,.12);
+}
+
+.planet-ring-front {
+  z-index: 3;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid rgba(180,205,255,.4);
+  border-left: 4px solid rgba(180,205,255,.22);
+  border-right: 4px solid rgba(180,205,255,.22);
+  filter: drop-shadow(0 0 8px rgba(150,180,255,.4));
+}
+
+.planet-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130px; height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(70,110,255,.2) 0%, transparent 68%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.planet-moon {
+  position: absolute;
+  top: -10px; right: -10px;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #dde5ff, #7880cc);
+  box-shadow: 0 0 10px rgba(180,200,255,.6), 0 0 22px rgba(100,130,255,.3);
+  animation: moonOrbit 7s linear infinite;
+  z-index: 4;
+}
+
+@keyframes moonOrbit {
+  0%   { transform: rotate(0deg) translateX(44px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(44px) rotate(-360deg); }
+}
+
+/* ── DARK TOGGLE ──────────────────────────────────────────── */
+.dark-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.dark-toggle:hover { border-color: var(--ink-3); background: var(--feature); }
+
+.dt-track {
+  width: 30px; height: 16px;
+  border-radius: 100px;
+  background: var(--line);
+  position: relative;
+  flex-shrink: 0;
+  transition: background .3s;
+}
+.dark-toggle-on .dt-track { background: var(--accent); }
+
+.dt-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  transition: transform .3s ease;
+}
+.dark-toggle-on .dt-thumb { transform: translateX(14px); }
+.dt-icon { font-size: 13px; line-height: 1; }
+
+/* ── HIDE ON TOUCH / NARROW ───────────────────────────────── */
+@media (hover: none) {
+  .planet-companion,
+  .cursor-dot,
+  .cursor-ring { display: none !important; }
+}
+@media (max-width: 900px) {
+  .planet-companion { display: none !important; }
+}

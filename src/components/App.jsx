@@ -335,8 +335,181 @@ function PolarisMark({ size = 22 }) {
   );
 }
 
+// ── Grain Overlay — animated canvas film grain ─────────────
+function GrainOverlay() {
+  const canvasRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    // Small buffer → stretched by CSS → organic filmic grain
+    canvas.width = 200;
+    canvas.height = 150;
+    let animId;
+    let lastTime = 0;
+
+    function draw(time) {
+      animId = requestAnimationFrame(draw);
+      if (time - lastTime < 52) return; // ~19fps
+      lastTime = time;
+      const { width: w, height: h } = canvas;
+      const imageData = ctx.createImageData(w, h);
+      const d = imageData.data;
+      for (let i = 0; i < d.length; i += 4) {
+        const g = Math.random() * 255 | 0;
+        d[i] = d[i + 1] = d[i + 2] = g;
+        d[i + 3] = Math.random() * 28 | 0;
+      }
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    animId = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
+  return <canvas ref={canvasRef} className="grain-overlay" aria-hidden="true" />;
+}
+
+// ── Custom Cursor — dot + ring, follows mouse with spring ──
+function CustomCursor() {
+  const [show, setShow] = React.useState(false);
+  const [hovering, setHovering] = React.useState(false);
+  const [clicking, setClicking] = React.useState(false);
+
+  const mX = useMotionValue(0);
+  const mY = useMotionValue(0);
+
+  const dotX = useSpring(mX, { stiffness: 900, damping: 45 });
+  const dotY = useSpring(mY, { stiffness: 900, damping: 45 });
+  const ringX = useSpring(mX, { stiffness: 100, damping: 20 });
+  const ringY = useSpring(mY, { stiffness: 100, damping: 20 });
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    const HOVER = 'a, button, [role="button"], .logo-tile, .bento-cell, .module-tile, .pack, .industry-tab, .ftab, .product-tile, .contact-card, .quote-card, .version-card, .mb-bundle-btn, .mb-module-card, .cart-qty-btn, .calc-slider-input';
+
+    const onMove  = (e) => { mX.set(e.clientX); mY.set(e.clientY); setShow(true); };
+    const onLeave = ()  => setShow(false);
+    const onDown  = ()  => setClicking(true);
+    const onUp    = ()  => setClicking(false);
+    const onOver  = (e) => { if (e.target.closest(HOVER)) setHovering(true);  };
+    const onOut   = (e) => { if (e.target.closest(HOVER)) setHovering(false); };
+
+    window.addEventListener('mousemove',  onMove,  { passive: true });
+    document.addEventListener('mouseleave', onLeave);
+    document.addEventListener('mousedown',  onDown);
+    document.addEventListener('mouseup',    onUp);
+    document.addEventListener('mouseover',  onOver);
+    document.addEventListener('mouseout',   onOut);
+
+    return () => {
+      window.removeEventListener('mousemove',   onMove);
+      document.removeEventListener('mouseleave', onLeave);
+      document.removeEventListener('mousedown',  onDown);
+      document.removeEventListener('mouseup',    onUp);
+      document.removeEventListener('mouseover',  onOver);
+      document.removeEventListener('mouseout',   onOut);
+    };
+  }, [mX, mY]);
+
+  return (
+    <>
+      <motion.div
+        className="cursor-dot"
+        style={{ x: dotX, y: dotY, translateX: '-50%', translateY: '-50%' }}
+        animate={{ opacity: show ? 1 : 0, scale: clicking ? 0.35 : hovering ? 0 : 1 }}
+        transition={{ duration: 0.12 }}
+      />
+      <motion.div
+        className="cursor-ring"
+        style={{ x: ringX, y: ringY, translateX: '-50%', translateY: '-50%' }}
+        animate={{ opacity: show ? 0.75 : 0, scale: clicking ? 0.65 : hovering ? 1.9 : 1 }}
+        transition={{ duration: 0.18 }}
+      />
+    </>
+  );
+}
+
+// ── Planet Companion — gas giant that follows the mouse ────
+function PlanetCompanion() {
+  const [show, setShow] = React.useState(false);
+
+  const mX = useMotionValue(typeof window !== 'undefined' ? window.innerWidth * 0.75 : 600);
+  const mY = useMotionValue(typeof window !== 'undefined' ? window.innerHeight * 0.25 : 200);
+
+  // Heavy spring lag = planet lags like a real orbiting body
+  const x = useSpring(mX, { stiffness: 26, damping: 15, mass: 2.8 });
+  const y = useSpring(mY, { stiffness: 26, damping: 15, mass: 2.8 });
+  const rotateZ = useSpring(0, { stiffness: 50, damping: 20 });
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    let prevX = 0;
+    const onMove = (e) => {
+      const dx = e.clientX - prevX;
+      prevX = e.clientX;
+      // Planet trails 60px behind and above cursor so it doesn't block it
+      mX.set(e.clientX + 60);
+      mY.set(e.clientY - 60);
+      rotateZ.set(Math.max(-18, Math.min(18, dx * 0.7)));
+      if (!show) setShow(true);
+    };
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    return () => window.removeEventListener('mousemove', onMove);
+  }, [mX, mY, rotateZ, show]);
+
+  return (
+    <motion.div
+      className="planet-companion"
+      style={{ x, y, rotateZ }}
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: show ? 1 : 0, scale: show ? 1 : 0.4 }}
+      transition={{ duration: 0.9, ease: [0.34, 1.56, 0.64, 1] }}
+      aria-hidden="true"
+    >
+      <div className="planet-wrap">
+        {/* Ring behind sphere */}
+        <div className="planet-ring planet-ring-behind" />
+        {/* Sphere with surface detail */}
+        <div className="planet-sphere">
+          <div className="planet-bands" />
+          <div className="planet-highlight" />
+          <div className="planet-shadow-cast" />
+        </div>
+        {/* Ring in front of sphere */}
+        <div className="planet-ring planet-ring-front" />
+        {/* Atmospheric glow */}
+        <div className="planet-glow" />
+      </div>
+      {/* Orbiting moon — Polaris companion orbits its planet */}
+      <div className="planet-moon" />
+    </motion.div>
+  );
+}
+
+// ── Dark Toggle ────────────────────────────────────────────
+function DarkToggle({ dark, setDark }) {
+  return (
+    <button
+      className={`dark-toggle${dark ? ' dark-toggle-on' : ''}`}
+      onClick={() => setDark((d) => !d)}
+      aria-label={dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+      title={dark ? 'Modo claro' : 'Modo oscuro'}
+    >
+      <span className="dt-track"><span className="dt-thumb" /></span>
+      <span className="dt-icon">{dark ? '☀' : '☽'}</span>
+    </button>
+  );
+}
+
 // ── Nav ────────────────────────────────────────────────────
-function Nav() {
+function Nav({ dark = false, setDark = () => {} }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   React.useEffect(() => {
@@ -363,6 +536,7 @@ function Nav() {
         </div>
         <div className="nav-cta-group">
           <a className="nav-login" href="https://polaris-web-sooty.vercel.app" target="_blank" rel="noopener">Iniciar sesión</a>
+          <DarkToggle dark={dark} setDark={setDark} />
           <a className="btn btn-ink" href="#descargar">Descargar <span className="arrow">→</span></a>
           <button
             className={'nav-hamburger' + (mobileOpen ? ' open' : '')}
@@ -1306,13 +1480,29 @@ function Footer() {
 
 // ── App ────────────────────────────────────────────────────
 export default function App() {
+  const [dark, setDark] = React.useState(false);
+
+  React.useEffect(() => {
+    const html = document.documentElement;
+    if (dark) {
+      html.classList.remove('pal-mercurio');
+      html.classList.add('pal-noche');
+    } else {
+      html.classList.remove('pal-noche');
+      html.classList.add('pal-mercurio');
+    }
+  }, [dark]);
+
   useScrollEngine();
 
   return (
     <>
+      <GrainOverlay />
+      <CustomCursor />
+      <PlanetCompanion />
       <ScrollCompanion />
       <AmbientParticles />
-      <Nav />
+      <Nav dark={dark} setDark={setDark} />
       <Hero />
       <Marquee speed={32} />
       <Stats />
