@@ -309,14 +309,16 @@ function CustomCursor() {
   );
 }
 
-// ── Planet Companion — gas giant that follows the mouse ────
+// ── Planet Companion — 3 variants, random per session ─────
+const PLANET_VARIANTS = ['ember', 'frost', 'void'];
+
 function PlanetCompanion() {
   const [show, setShow] = React.useState(false);
+  const variant = React.useRef(PLANET_VARIANTS[Math.floor(Math.random() * 3)]);
 
   const mX = useMotionValue(typeof window !== 'undefined' ? window.innerWidth * 0.75 : 600);
   const mY = useMotionValue(typeof window !== 'undefined' ? window.innerHeight * 0.25 : 200);
 
-  // Heavy spring lag = planet lags like a real orbiting body
   const x = useSpring(mX, { stiffness: 26, damping: 15, mass: 2.8 });
   const y = useSpring(mY, { stiffness: 26, damping: 15, mass: 2.8 });
   const rotateZ = useSpring(0, { stiffness: 50, damping: 20 });
@@ -329,9 +331,8 @@ function PlanetCompanion() {
     const onMove = (e) => {
       const dx = e.clientX - prevX;
       prevX = e.clientX;
-      // Planet trails behind/above cursor — offset para planeta 160px
-      mX.set(e.clientX + 110);
-      mY.set(e.clientY - 110);
+      mX.set(e.clientX + 48);
+      mY.set(e.clientY - 48);
       rotateZ.set(Math.max(-18, Math.min(18, dx * 0.7)));
       if (!show) setShow(true);
     };
@@ -343,6 +344,7 @@ function PlanetCompanion() {
   return (
     <motion.div
       className="planet-companion"
+      data-variant={variant.current}
       style={{ x, y, rotateZ }}
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: show ? 1 : 0, scale: show ? 1 : 0.4 }}

@@ -2383,7 +2383,7 @@ body { transition: background-color .45s ease, color .45s ease; }
   will-change: transform, opacity;
 }
 
-/* ── PLANET COMPANION ─────────────────────────────────────── */
+/* ── PLANET COMPANION — 3 variants ───────────────────────── */
 .planet-companion {
   position: fixed;
   top: 0; left: 0;
@@ -2392,27 +2392,18 @@ body { transition: background-color .45s ease, color .45s ease; }
   will-change: transform;
 }
 
+/* Base structure — variant CSS overrides size/color */
 .planet-wrap {
   position: relative;
-  width: 160px; height: 160px;
+  width: 72px; height: 72px;
   transform: translate(-50%, -50%);
 }
 
 .planet-sphere {
   position: absolute;
   top: 0; left: 0;
-  width: 160px; height: 160px;
+  width: 72px; height: 72px;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 32% 28%, rgba(200,225,255,.55) 0%, transparent 42%),
-    radial-gradient(circle at 68% 68%, rgba(10,5,50,.9) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, #3a5aff 0%, #1a2cb0 45%, #060820 100%);
-  box-shadow:
-    inset -14px -14px 36px rgba(0,0,0,.7),
-    inset 7px 7px 22px rgba(180,210,255,.12),
-    0 0 55px rgba(70,110,255,.65),
-    0 0 110px rgba(70,110,255,.35),
-    0 0 200px rgba(70,110,255,.14);
   z-index: 2;
   overflow: hidden;
 }
@@ -2421,13 +2412,6 @@ body { transition: background-color .45s ease, color .45s ease; }
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent 0%, transparent 22%,
-    rgba(255,255,255,.025) 22%, rgba(255,255,255,.025) 26%,
-    transparent 26%, transparent 48%,
-    rgba(255,255,255,.018) 48%, rgba(255,255,255,.018) 52%
-  );
 }
 
 .planet-highlight {
@@ -2435,69 +2419,174 @@ body { transition: background-color .45s ease, color .45s ease; }
   top: 10%; left: 14%;
   width: 36%; height: 26%;
   border-radius: 50%;
-  background: rgba(255,255,255,.22);
-  filter: blur(12px);
+  filter: blur(5px);
 }
 
 .planet-shadow-cast {
   position: absolute;
-  top: 0; right: -6px;
+  top: 0; right: -3px;
   width: 52%; height: 100%;
   border-radius: 0 50% 50% 0;
-  background: rgba(0,0,12,.5);
-  filter: blur(12px);
+  filter: blur(6px);
 }
 
 .planet-ring {
   position: absolute;
   top: 50%; left: 50%;
-  width: 300px; height: 46px;
-  margin: -23px 0 0 -150px;
+  width: 140px; height: 22px;
+  margin: -11px 0 0 -70px;
   border-radius: 50%;
 }
 
-.planet-ring-behind {
-  z-index: 1;
-  border-top: 18px solid rgba(180,205,255,.22);
-  border-bottom: 18px solid transparent;
-  border-left: 8px solid rgba(180,205,255,.12);
-  border-right: 8px solid rgba(180,205,255,.12);
-}
-
-.planet-ring-front {
-  z-index: 3;
-  border-top: 18px solid transparent;
-  border-bottom: 18px solid rgba(180,205,255,.4);
-  border-left: 8px solid rgba(180,205,255,.22);
-  border-right: 8px solid rgba(180,205,255,.22);
-  filter: drop-shadow(0 0 16px rgba(150,180,255,.45));
-}
+.planet-ring-behind { z-index: 1; }
+.planet-ring-front  { z-index: 3; }
 
 .planet-glow {
   position: absolute;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 300px; height: 300px;
+  width: 140px; height: 140px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(70,110,255,.18) 0%, transparent 68%);
   z-index: 0;
   pointer-events: none;
 }
 
 .planet-moon {
   position: absolute;
-  top: -14px; right: -14px;
-  width: 18px; height: 18px;
+  top: -7px; right: -7px;
+  width: 9px; height: 9px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #dde5ff, #7880cc);
-  box-shadow: 0 0 18px rgba(180,200,255,.7), 0 0 40px rgba(100,130,255,.35);
   animation: moonOrbit 7s linear infinite;
   z-index: 4;
 }
 
 @keyframes moonOrbit {
-  0%   { transform: rotate(0deg) translateX(100px) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+  0%   { transform: rotate(0deg) translateX(50px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(50px) rotate(-360deg); }
+}
+
+/* ── EMBER — warm gas giant, orange rings ─────────────────── */
+[data-variant="ember"] .planet-sphere {
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255,200,150,.55) 0%, transparent 42%),
+    radial-gradient(circle at 68% 68%, rgba(80,10,5,.9) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, #ff6b35 0%, #c94a1a 45%, #2d0800 100%);
+  box-shadow:
+    inset -8px -8px 18px rgba(0,0,0,.7),
+    inset 4px 4px 10px rgba(255,180,120,.12),
+    0 0 28px rgba(255,100,40,.7),
+    0 0 55px rgba(255,100,40,.35),
+    0 0 90px rgba(255,100,40,.15);
+}
+[data-variant="ember"] .planet-bands {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0%, transparent 22%,
+    rgba(255,255,255,.03) 22%, rgba(255,255,255,.03) 26%,
+    transparent 26%, transparent 48%,
+    rgba(255,160,80,.04) 48%, rgba(255,160,80,.04) 52%
+  );
+}
+[data-variant="ember"] .planet-highlight { background: rgba(255,220,180,.3); }
+[data-variant="ember"] .planet-shadow-cast { background: rgba(20,0,0,.55); }
+[data-variant="ember"] .planet-ring-behind {
+  border-top: 8px solid rgba(255,160,80,.22);
+  border-bottom: 8px solid transparent;
+  border-left: 4px solid rgba(255,160,80,.12);
+  border-right: 4px solid rgba(255,160,80,.12);
+}
+[data-variant="ember"] .planet-ring-front {
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid rgba(255,180,100,.45);
+  border-left: 4px solid rgba(255,160,80,.22);
+  border-right: 4px solid rgba(255,160,80,.22);
+  filter: drop-shadow(0 0 8px rgba(255,140,60,.5));
+}
+[data-variant="ember"] .planet-glow {
+  background: radial-gradient(circle, rgba(255,100,40,.2) 0%, transparent 68%);
+}
+[data-variant="ember"] .planet-moon {
+  background: radial-gradient(circle at 35% 30%, #ffe0b0, #c97040);
+  box-shadow: 0 0 8px rgba(255,180,80,.8), 0 0 18px rgba(255,120,40,.35);
+}
+
+/* ── FROST — ice world, cold blue, no ring ────────────────── */
+[data-variant="frost"] .planet-wrap {
+  width: 60px; height: 60px;
+}
+[data-variant="frost"] .planet-sphere {
+  width: 60px; height: 60px;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(240,252,255,.8) 0%, transparent 38%),
+    radial-gradient(circle at 65% 70%, rgba(10,40,80,.7) 0%, transparent 48%),
+    radial-gradient(circle at 50% 50%, #a8d8ea 0%, #3a7ca5 45%, #0d2d4a 100%);
+  box-shadow:
+    inset -6px -6px 14px rgba(0,0,0,.5),
+    inset 4px 4px 10px rgba(200,240,255,.3),
+    0 0 22px rgba(160,220,255,.65),
+    0 0 45px rgba(100,180,240,.3),
+    0 0 80px rgba(100,180,240,.12);
+}
+[data-variant="frost"] .planet-bands {
+  background: repeating-linear-gradient(
+    15deg,
+    transparent 0%, transparent 30%,
+    rgba(200,240,255,.04) 30%, rgba(200,240,255,.04) 34%,
+    transparent 34%, transparent 60%,
+    rgba(180,220,255,.03) 60%, rgba(180,220,255,.03) 64%
+  );
+}
+[data-variant="frost"] .planet-highlight {
+  background: rgba(255,255,255,.45);
+  filter: blur(4px);
+}
+[data-variant="frost"] .planet-shadow-cast { background: rgba(0,10,30,.5); filter: blur(5px); }
+[data-variant="frost"] .planet-ring { display: none; }
+[data-variant="frost"] .planet-glow {
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(160,220,255,.18) 0%, transparent 68%);
+}
+[data-variant="frost"] .planet-moon {
+  top: -5px; right: -5px;
+  width: 7px; height: 7px;
+  background: radial-gradient(circle at 35% 30%, #f0faff, #8abcd4);
+  box-shadow: 0 0 8px rgba(200,240,255,.9), 0 0 16px rgba(140,200,240,.4);
+  animation: moonOrbit 9s linear infinite;
+}
+
+/* ── VOID — dark matter orb, violet rim light ─────────────── */
+[data-variant="void"] .planet-wrap {
+  width: 54px; height: 54px;
+}
+[data-variant="void"] .planet-sphere {
+  width: 54px; height: 54px;
+  background: radial-gradient(circle at 50% 50%, #130a24 0%, #06030f 100%);
+  box-shadow:
+    inset -5px -5px 12px rgba(0,0,0,.95),
+    inset 3px 3px 8px rgba(120,60,200,.06),
+    0 0 0 1.5px rgba(140,80,240,.4),
+    0 0 18px rgba(120,60,200,.55),
+    0 0 40px rgba(90,30,180,.3),
+    0 0 80px rgba(70,20,140,.14);
+}
+[data-variant="void"] .planet-bands { background: none; }
+[data-variant="void"] .planet-highlight {
+  background: rgba(160,100,255,.12);
+  filter: blur(8px);
+  top: 5%; left: 8%; width: 45%; height: 35%;
+}
+[data-variant="void"] .planet-shadow-cast { background: rgba(0,0,0,.85); filter: blur(4px); }
+[data-variant="void"] .planet-ring { display: none; }
+[data-variant="void"] .planet-glow {
+  width: 130px; height: 130px;
+  background: radial-gradient(circle, rgba(100,40,200,.22) 0%, transparent 65%);
+}
+[data-variant="void"] .planet-moon {
+  top: -4px; right: -4px;
+  width: 5px; height: 5px;
+  background: radial-gradient(circle at 40% 35%, #e0c0ff, #8040c0);
+  box-shadow: 0 0 6px rgba(180,100,255,.9), 0 0 14px rgba(120,60,200,.4);
+  animation: moonOrbit 11s linear infinite;
 }
 
 /* ── DARK TOGGLE ──────────────────────────────────────────── */
