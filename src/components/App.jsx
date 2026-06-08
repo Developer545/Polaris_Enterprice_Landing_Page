@@ -113,218 +113,83 @@ function Tilt3D({ children, className = '', intensity = 15, scale = 1.02, style 
   );
 }
 
-// ── Floating 3D showcase images ───────────────────────────
-function Float3DShowcase() {
-  const screens = [
-    { src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80', alt: 'Dashboard analytics', label: 'Panel ejecutivo', delay: 0 },
-    { src: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80', alt: 'Point of sale retail', label: 'Punto de venta', delay: 0.15 },
-    { src: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80', alt: 'Financial reports', label: 'Reportes financieros', delay: 0.3 },
-  ];
+// ── Product Showcase — 3 CSS-native screen mockups ────────
+function ProductShowcase() {
+  const [tick, setTick] = React.useState(0);
+  React.useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 2800);
+    return () => clearInterval(id);
+  }, []);
+  const base = [42, 64, 50, 88, 70, 95, 75, 60];
+  const bars = base.map((h, i) => Math.min(100, Math.max(20, h + ((tick + i) % 5 - 2) * 5)));
 
   return (
-    <div className="float-3d-showcase">
-      {screens.map((s, i) => (
-        <Tilt3D key={i} className="float-3d-card" intensity={12} scale={1.04}>
-          <div className="float-3d-inner" style={{ animationDelay: `${s.delay}s` }}>
-            <img src={s.src} alt={s.alt} loading="lazy" />
-            <div className="float-3d-label">{s.label}</div>
-            <div className="float-3d-shine" />
+    <div className="product-showcase">
+      {/* Panel ejecutivo */}
+      <div className="ps-card">
+        <div className="ps-screen">
+          <div className="ps-screen-head">
+            <span className="ps-dot r" /><span className="ps-dot y" /><span className="ps-dot g" />
+            <span className="ps-title">panel</span>
           </div>
-        </Tilt3D>
-      ))}
-    </div>
-  );
-}
+          <div className="ps-kpi-row">
+            <div className="ps-kpi"><div className="ps-kpi-v">$2,840</div><div className="ps-kpi-l">Ventas hoy</div></div>
+            <div className="ps-kpi"><div className="ps-kpi-v">34</div><div className="ps-kpi-l">DTE</div></div>
+            <div className="ps-kpi"><div className="ps-kpi-v hi">↑12%</div><div className="ps-kpi-l">vs ayer</div></div>
+          </div>
+          <div className="ps-bars">
+            {bars.map((h, i) => (
+              <div key={i} className={`ps-bar${h > 80 ? ' hi' : ''}`} style={{ height: `${h}%` }} />
+            ))}
+          </div>
+        </div>
+        <div className="ps-label">Panel ejecutivo</div>
+      </div>
 
-// ── Scroll Companion — Polaris star that follows the journey ──
-function ScrollCompanion() {
-  return (
-    <div className="scroll-companion" aria-hidden>
-      {/* Main star */}
-      <svg className="sc-star" viewBox="0 0 120 120" fill="none">
-        <defs>
-          <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
-          </radialGradient>
-          <filter id="starBlur">
-            <feGaussianBlur stdDeviation="3" />
-          </filter>
-        </defs>
-        {/* Glow layer */}
-        <circle className="sc-glow" cx="60" cy="60" r="50" fill="url(#starGlow)" filter="url(#starBlur)" />
-        {/* Star shape */}
-        <path className="sc-shape" d="M60 10 L66 46 L90 26 L74 50 L110 56 L74 62 L90 86 L66 70 L60 106 L54 70 L30 86 L46 62 L10 56 L46 50 L30 26 L54 46 Z"
-          fill="currentColor" />
-        {/* Orbit ring */}
-        <circle className="sc-orbit" cx="60" cy="60" r="55" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 6" fill="none" opacity="0.2" />
-      </svg>
+      {/* Punto de venta */}
+      <div className="ps-card">
+        <div className="ps-screen">
+          <div className="ps-screen-head">
+            <span className="ps-dot r" /><span className="ps-dot y" /><span className="ps-dot g" />
+            <span className="ps-title">pos</span>
+          </div>
+          <div className="ps-pos">
+            {[['Coca-Cola 600ml', '$1.25'], ['Pan francés ×4', '$2.00'], ['Agua purificada', '$0.75']].map(([n, p], i) => (
+              <div key={i} className="ps-pos-row">
+                <span>{n}</span><span className="ps-pos-price">{p}</span>
+              </div>
+            ))}
+            <div className="ps-pos-total">Total · <strong>$4.00</strong></div>
+            <div className="ps-emit-btn">Cobrar y emitir DTE →</div>
+          </div>
+        </div>
+        <div className="ps-label">Punto de venta</div>
+      </div>
 
-      {/* Satellite dots */}
-      <div className="sc-satellite sc-sat-1" />
-      <div className="sc-satellite sc-sat-2" />
-      <div className="sc-satellite sc-sat-3" />
-
-      {/* Trail line — SVG path that draws itself */}
-      <svg className="sc-trail" viewBox="0 0 100 2000" preserveAspectRatio="none">
-        <path className="sc-trail-path"
-          d="M50 0 C50 200, 80 300, 50 500 C20 700, 80 900, 50 1100 C20 1300, 80 1500, 50 1700 C20 1900, 50 2000, 50 2000"
-          stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="6 8" />
-      </svg>
-    </div>
-  );
-}
-
-// ── Ambient Particles — floating dots throughout page ─────
-function AmbientParticles() {
-  const particles = React.useMemo(() =>
-    Array.from({ length: 30 }, (_, i) => ({
-      id: i,
-      size: 2 + Math.random() * 3,
-      left: Math.random() * 100,
-      delay: Math.random() * 20,
-      duration: 15 + Math.random() * 25,
-      opacity: 0.08 + Math.random() * 0.15,
-    })), []);
-
-  return (
-    <div className="ambient-particles" aria-hidden>
-      {particles.map((p) => (
-        <div
-          key={p.id}
-          className="amb-particle"
-          style={{
-            width: p.size,
-            height: p.size,
-            left: `${p.left}%`,
-            animationDelay: `${p.delay}s`,
-            animationDuration: `${p.duration}s`,
-            opacity: p.opacity,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-// ── Section Divider — decorative SVG between sections ─────
-function SectionDivider({ flip = false }) {
-  return (
-    <div className={`section-divider${flip ? ' flip' : ''}`} aria-hidden>
-      <svg viewBox="0 0 1200 80" preserveAspectRatio="none" className="sd-wave">
-        <path d="M0 40 C300 80, 600 0, 900 40 C1050 60, 1150 30, 1200 40 L1200 80 L0 80 Z"
-          fill="currentColor" />
-      </svg>
-      <div className="sd-line">
-        <div className="sd-dot" />
+      {/* DTE electrónico */}
+      <div className="ps-card">
+        <div className="ps-screen">
+          <div className="ps-screen-head">
+            <span className="ps-dot r" /><span className="ps-dot y" /><span className="ps-dot g" />
+            <span className="ps-title">dte</span>
+          </div>
+          <div className="ps-dte">
+            <div className="ps-dte-badge">✓ Transmitido · Ministerio de Hacienda</div>
+            <div className="ps-dte-row">DTE-01-00234 · CCF</div>
+            <div className="ps-dte-row">Ferretería Los Ceibos</div>
+            <div className="ps-dte-amount">$245.30</div>
+            <div className="ps-dte-code">SELLO: 2024-0BF2A3...C9</div>
+          </div>
+        </div>
+        <div className="ps-label">Facturación DTE</div>
       </div>
     </div>
   );
 }
 
-// ── Exploded Assembly — 3D scroll-driven build/teardown ───
-function ExplodedAssembly() {
-  return (
-    <section className="exploded-section">
-      <div className="exploded-sticky">
-        <div className="exploded-text">
-          <div className="exploded-eyebrow">
-            <span className="num">✦</span>
-            <span className="label">/ Arquitectura</span>
-          </div>
-          <h2 className="display">Todo se <em>conecta.</em></h2>
-          <p className="exploded-desc">
-            Cada módulo de Polaris encaja como pieza de un sistema unificado.
-            Scrolleá para ver cómo se ensambla tu ERP completo.
-          </p>
-        </div>
-        <div className="exploded-stage">
-          {/* Layer 0: Base frame */}
-          <div className="exploded-piece piece-frame" data-piece="frame">
-            <div className="piece-inner">
-              <div className="piece-chrome">
-                <div className="piece-dots"><span /><span /><span /></div>
-                <span className="piece-url">app.polaris.sv</span>
-              </div>
-            </div>
-          </div>
 
-          {/* Layer 1: Sidebar */}
-          <div className="exploded-piece piece-sidebar" data-piece="sidebar">
-            <div className="piece-inner">
-              <div className="sidebar-logo"><PolarisMark size={14} /></div>
-              <div className="sidebar-item active"><span className="si-icon">▣</span> Panel</div>
-              <div className="sidebar-item"><span className="si-icon">◈</span> POS</div>
-              <div className="sidebar-item"><span className="si-icon">◇</span> DTE</div>
-              <div className="sidebar-item"><span className="si-icon">▤</span> Inventario</div>
-              <div className="sidebar-item"><span className="si-icon">◎</span> CxC</div>
-              <div className="sidebar-item"><span className="si-icon">▥</span> Reportes</div>
-            </div>
-          </div>
 
-          {/* Layer 2: Header bar */}
-          <div className="exploded-piece piece-header" data-piece="header">
-            <div className="piece-inner">
-              <span className="ph-breadcrumb">Panel / Hoy</span>
-              <div className="ph-actions">
-                <span className="ph-btn">Filtrar</span>
-                <span className="ph-btn primary">+ Nueva venta</span>
-              </div>
-            </div>
-          </div>
 
-          {/* Layer 3: KPI cards */}
-          <div className="exploded-piece piece-kpis" data-piece="kpis">
-            <div className="piece-inner">
-              <div className="pk-card">
-                <div className="pk-label">Ventas hoy</div>
-                <div className="pk-value">$2,840</div>
-                <div className="pk-delta up">↑ 12%</div>
-              </div>
-              <div className="pk-card">
-                <div className="pk-label">DTE emitidos</div>
-                <div className="pk-value">34</div>
-                <div className="pk-delta up">↑ 8%</div>
-              </div>
-              <div className="pk-card">
-                <div className="pk-label">Ticket prom.</div>
-                <div className="pk-value">$83.50</div>
-                <div className="pk-delta">= 0%</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Layer 4: Chart */}
-          <div className="exploded-piece piece-chart" data-piece="chart">
-            <div className="piece-inner">
-              <div className="pc-title">Ventas por hora</div>
-              <div className="pc-bars">
-                {[42, 64, 50, 88, 70, 95, 75, 60, 82].map((h, i) => (
-                  <div key={i} className={`pc-bar${h > 80 ? ' hi' : ''}`} style={{ height: `${h}%` }} />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Layer 5: Table */}
-          <div className="exploded-piece piece-table" data-piece="table">
-            <div className="piece-inner">
-              <div className="pt-title">Últimas transacciones</div>
-              <div className="pt-row"><span>DTE-01-00234</span><span className="pt-amount">$245.30</span><span className="pt-ok">✓</span></div>
-              <div className="pt-row"><span>DTE-03-00089</span><span className="pt-amount">$1,820.00</span><span className="pt-ok">✓</span></div>
-              <div className="pt-row"><span>DTE-01-00235</span><span className="pt-amount">$98.75</span><span className="pt-ok">✓</span></div>
-            </div>
-          </div>
-
-          {/* Assembly label overlay */}
-          <div className="exploded-progress">
-            <div className="exploded-progress-bar" />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 // ── Star icon (Polaris logo) ───────────────────────────────
 function PolarisMark({ size = 22 }) {
@@ -942,7 +807,7 @@ function Bento() {
           </div>
         </div>
 
-        <Float3DShowcase />
+        <ProductShowcase />
       </div>
     </section>
   );
@@ -1517,29 +1382,21 @@ export default function App() {
       <GrainOverlay />
       <CustomCursor />
       <PlanetCompanion />
-      <ScrollCompanion />
-      <AmbientParticles />
       <Nav dark={dark} setDark={setDark} />
       <Hero />
       <Marquee speed={32} />
       <Stats />
       <LogoWall />
-      <SectionDivider />
-      <ExplodedAssembly />
       <Bento />
-      <SectionDivider flip />
       <IndustriesSection />
       <FeaturesSection />
-      <SectionDivider />
       <Comparison />
       <Modules />
       <ModulePricingSection />
-      <SectionDivider flip />
       <CalculatorSection />
       <Pricing />
       <Quotes />
       <FAQ />
-      <SectionDivider />
       <VersionesDownload />
       <Contact />
       <CTAFinal />

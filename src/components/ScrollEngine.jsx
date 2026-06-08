@@ -93,93 +93,6 @@ function animateMarquee() {
   });
 }
 
-/* ── Exploded Assembly — scroll-pinned 3D build ────────────── */
-function animateExploded() {
-  const section = document.querySelector('.exploded-section');
-  if (!section) return;
-
-  // Pin the section while scrolling through assembly
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.exploded-section',
-      start: 'top top',
-      end: '+=2500',
-      pin: true,
-      scrub: 1,
-      anticipatePin: 1,
-    },
-  });
-
-  // Phase 1: Text fades in
-  tl.fromTo('.exploded-text', {
-    opacity: 0, y: 40,
-  }, {
-    opacity: 1, y: 0, duration: 0.15,
-  });
-
-  // Phase 2: Frame flies in from below with rotation
-  tl.fromTo('.piece-frame', {
-    opacity: 0, y: 200, rotateX: 25, rotateY: -10, scale: 0.6,
-  }, {
-    opacity: 1, y: 0, rotateX: 5, rotateY: -5, scale: 1, duration: 0.15,
-  });
-
-  // Phase 3: Sidebar slides in from left
-  tl.fromTo('.piece-sidebar', {
-    opacity: 0, x: -300, rotateY: 40,
-  }, {
-    opacity: 1, x: 0, rotateY: -5, duration: 0.12,
-  }, '-=0.05');
-
-  // Phase 4: Header drops from top
-  tl.fromTo('.piece-header', {
-    opacity: 0, y: -200, rotateX: -30,
-  }, {
-    opacity: 1, y: 0, rotateX: 5, duration: 0.12,
-  }, '-=0.05');
-
-  // Phase 5: KPIs fly in from right
-  tl.fromTo('.piece-kpis', {
-    opacity: 0, x: 300, rotateY: -30, scale: 0.7,
-  }, {
-    opacity: 1, x: 0, rotateY: -5, scale: 1, duration: 0.12,
-  }, '-=0.03');
-
-  // Phase 6: Chart rises from below
-  tl.fromTo('.piece-chart', {
-    opacity: 0, y: 250, rotateX: 20, scale: 0.7,
-  }, {
-    opacity: 1, y: 0, rotateX: 5, scale: 1, duration: 0.12,
-  }, '-=0.03');
-
-  // Phase 7: Table slides from right
-  tl.fromTo('.piece-table', {
-    opacity: 0, x: 250, rotateY: -25, scale: 0.8,
-  }, {
-    opacity: 1, x: 0, rotateY: -5, scale: 1, duration: 0.12,
-  }, '-=0.03');
-
-  // Phase 8: Progress bar fills
-  tl.fromTo('.exploded-progress-bar', {
-    scaleX: 0,
-  }, {
-    scaleX: 1, duration: 0.1,
-  });
-
-  // Phase 9: Everything flattens to final assembled state
-  tl.to('.exploded-piece', {
-    rotateX: 0, rotateY: 0, duration: 0.15,
-    stagger: 0.02,
-  });
-
-  // Phase 10: Hold assembled view
-  tl.to({}, { duration: 0.08 });
-
-  // Phase 11: Slight zoom into the assembled dashboard
-  tl.to('.exploded-stage', {
-    scale: 1.05, duration: 0.1,
-  });
-}
 
 /* ── Stats counter entrance ─────────────────────────────────── */
 function animateStats() {
@@ -268,23 +181,21 @@ function animateBento() {
   });
 }
 
-/* ── 3D Showcase — staggered depth entrance ─────────────────── */
+/* ── Product Showcase — staggered entrance ──────────────────── */
 function animate3DShowcase() {
-  gsap.fromTo('.float-3d-card', {
+  gsap.fromTo('.ps-card', {
     opacity: 0,
-    y: 80,
-    rotateX: 15,
-    scale: 0.85,
+    y: 60,
+    scale: 0.92,
   }, {
     opacity: 1,
     y: 0,
-    rotateX: 0,
     scale: 1,
-    duration: 1,
+    duration: 0.8,
     ease: 'power3.out',
-    stagger: 0.2,
+    stagger: 0.15,
     scrollTrigger: {
-      trigger: '.float-3d-showcase',
+      trigger: '.product-showcase',
       start: 'top 85%',
       toggleActions: 'play reverse play reverse',
     },
@@ -512,110 +423,6 @@ function animateChips() {
   });
 }
 
-/* ── Scroll Companion — star that follows entire journey ───── */
-function animateCompanion() {
-  const comp = document.querySelector('.scroll-companion');
-  if (!comp) return;
-
-  const star = comp.querySelector('.sc-star');
-  const shape = comp.querySelector('.sc-shape');
-  const glow = comp.querySelector('.sc-glow');
-  const orbit = comp.querySelector('.sc-orbit');
-  const trail = comp.querySelector('.sc-trail-path');
-  const sats = comp.querySelectorAll('.sc-satellite');
-
-  // Set initial trail stroke for drawing effect
-  if (trail) {
-    const len = trail.getTotalLength();
-    gsap.set(trail, { strokeDasharray: len, strokeDashoffset: len });
-
-    // Draw trail as user scrolls entire page
-    gsap.to(trail, {
-      strokeDashoffset: 0,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: document.body,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 1,
-      },
-    });
-  }
-
-  // Continuous slow rotation
-  gsap.to(star, {
-    rotation: 360,
-    duration: 60,
-    repeat: -1,
-    ease: 'none',
-  });
-
-  // Orbit ring counter-rotation
-  gsap.to(orbit, {
-    rotation: -360,
-    duration: 40,
-    repeat: -1,
-    ease: 'none',
-    transformOrigin: '50% 50%',
-  });
-
-  // Satellite orbits
-  sats.forEach((sat, i) => {
-    gsap.to(sat, {
-      rotation: 360,
-      duration: 8 + i * 4,
-      repeat: -1,
-      ease: 'none',
-      transformOrigin: '-20px -20px',
-    });
-  });
-
-  // Phase transitions based on scroll position
-  const sections = [
-    { trigger: '.hero', props: { scale: 1, opacity: 0.6, x: 0, y: 0 } },
-    { trigger: '.stats-section', props: { scale: 1.3, opacity: 0.8 } },
-    { trigger: '.exploded-section', props: { scale: 0.5, opacity: 0.3 } },
-    { trigger: '#producto', props: { scale: 0.7, opacity: 0.5 } },
-    { trigger: '#industrias', props: { scale: 0.9, opacity: 0.6 } },
-    { trigger: '#dte', props: { scale: 0.6, opacity: 0.4 } },
-    { trigger: '#modulos', props: { scale: 1.1, opacity: 0.7 } },
-    { trigger: '#precios', props: { scale: 0.8, opacity: 0.5 } },
-    { trigger: '#faq', props: { scale: 0.6, opacity: 0.3 } },
-    { trigger: '#descargar', props: { scale: 1, opacity: 0.6 } },
-    { trigger: '.cta-final', props: { scale: 1.5, opacity: 0.9 } },
-  ];
-
-  sections.forEach(({ trigger, props }) => {
-    if (!document.querySelector(trigger)) return;
-    gsap.to(star, {
-      ...props,
-      duration: 0.8,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger,
-        start: 'top 60%',
-        toggleActions: 'play none none reverse',
-      },
-    });
-  });
-
-  // Glow pulse on key sections
-  ['.stats-section', '#modulos', '.cta-final'].forEach((trigger) => {
-    if (!document.querySelector(trigger)) return;
-    gsap.to(glow, {
-      opacity: 1,
-      scale: 1.4,
-      duration: 0.6,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger,
-        start: 'top 60%',
-        end: 'bottom 40%',
-        toggleActions: 'play reverse play reverse',
-      },
-    });
-  });
-}
 
 /* ── Nav scroll progress bar ────────────────────────────────── */
 function animateNavProgress() {
@@ -641,7 +448,7 @@ function animateNavProgress() {
 /* ── Magnetic hover — cards attract toward mouse ─────────────── */
 function animateMagnetic() {
   const els = document.querySelectorAll(
-    '.logo-tile, .bento-cell, .module-tile, .pack, .contact-card, .version-card, .quote-card'
+    '.logo-tile, .bento-cell, .module-tile, .pack, .contact-card, .version-card, .quote-card, .ps-card'
   );
 
   els.forEach((el) => {
@@ -690,7 +497,6 @@ export function useScrollEngine() {
       animateMarquee();
       animateStats();
       animateLogoWall();
-      animateExploded();
       animateSectionHeads();
       animateBento();
       animate3DShowcase();
@@ -704,7 +510,6 @@ export function useScrollEngine() {
       animateCTAFinal();
       animateFooter();
       animateChips();
-      animateCompanion();
       animateNavProgress();
       animateMagnetic();
     });
