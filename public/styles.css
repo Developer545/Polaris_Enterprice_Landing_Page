@@ -2354,10 +2354,7 @@ body { transition: background-color .45s ease, color .45s ease; }
 }
 .pal-noche .grain-overlay { opacity: 0.22; }
 
-/* ── CUSTOM CURSOR ────────────────────────────────────────── */
-@media (hover: hover) and (pointer: fine) {
-  *, *::before, *::after { cursor: none !important; }
-}
+/* ── CUSTOM CURSOR (retired — native cursor restored) ─────── */
 
 .cursor-dot {
   position: fixed;
@@ -2886,3 +2883,66 @@ body { transition: background-color .45s ease, color .45s ease; }
   color: rgba(255,255,255,.85);
   text-shadow: 0 1px 4px rgba(0,0,0,.5);
 }
+
+/* ============================================================
+   V2 ENTERPRISE — sober reveal system (IntersectionObserver + CSS)
+   Replaces GSAP/Lenis. Animations run once, transform/opacity only.
+   ============================================================ */
+
+/* Elements hidden only when JS is confirmed (html.js) — no-JS and
+   crawlers always see full content. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity .65s cubic-bezier(.22,.61,.36,1),
+    transform .65s cubic-bezier(.22,.61,.36,1);
+  transition-delay: var(--rd, 0s);
+}
+html.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Group: children stagger (delay set by JS via --rd) */
+html.js [data-reveal-group] > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity .55s cubic-bezier(.22,.61,.36,1),
+    transform .55s cubic-bezier(.22,.61,.36,1);
+  transition-delay: var(--rd, 0s);
+}
+html.js [data-reveal-group].is-in > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hero entrance — one-time CSS keyframe cascade on load */
+@keyframes fxUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: none; }
+}
+html.js .hero [data-fx] {
+  opacity: 0;
+  animation: fxUp .7s cubic-bezier(.22,.61,.36,1) forwards;
+  animation-delay: var(--fx, 0s);
+}
+
+/* Reduced motion / fallback: everything visible, nothing moves */
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal],
+  html.js [data-reveal-group] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  html.js .hero [data-fx] {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+  .marquee { animation: none !important; }
+}
+
+/* Meta de versión/tamaño dentro de botones de descarga */
+.dl-meta { font-size: .76em; opacity: .6; font-weight: 400; }

@@ -1,5 +1,107 @@
 ---
-import App from '../components/App.jsx';
+import { IndustriesToggle, FeatureTabs, DTECalculator, ModuleBuilder, PACKS } from '../components/Interactive.jsx';
+
+const MARQUEE_ITEMS = [
+  'Ministerio de Hacienda',
+  'Normativa DTE 2024',
+  'Firma digital',
+  'Windows 10 / 11',
+  'Impresoras ESC/POS',
+  'Lectores USB HID',
+  'Multi-sucursal',
+  'Funciona offline',
+  'Soporte en español',
+  'Hosted in El Salvador',
+];
+const MARQUEE = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+
+const STATS = [
+  { num: 500, suffix: '+', label: 'Negocios activos', sub: 'en todo El Salvador', dec: 0 },
+  { num: 2, suffix: 'M+', label: 'DTE emitidos', sub: 'al Ministerio de Hacienda', dec: 0 },
+  { num: 99.9, suffix: '%', label: 'Uptime', sub: 'promedio anual', dec: 1 },
+  { num: 2, suffix: ' min', label: 'Para instalar', sub: 'y ya estás facturando', dec: 0 },
+];
+
+const LOGOS = [
+  { name: 'Ferretería Los Ceibos', sector: 'Ferretería' },
+  { name: 'Distribuidora Omega', sector: 'Distribución' },
+  { name: 'Restaurante La Fogata', sector: 'Restaurante' },
+  { name: 'Farmacia Vida', sector: 'Salud' },
+  { name: 'Hotel Pacífico', sector: 'Hotelería' },
+  { name: 'Super Don Quique', sector: 'Retail' },
+  { name: 'Clínica Santa Rosa', sector: 'Médico' },
+  { name: 'Taller ElectroPro', sector: 'Automotriz' },
+];
+
+const CMP_ROWS = [
+  { feature: 'Facturación DTE electrónica', excel: false, otro: 'Parcial', polaris: true },
+  { feature: 'POS con scanner y teclado', excel: false, otro: true, polaris: true },
+  { feature: 'Funciona sin internet', excel: true, otro: false, polaris: true },
+  { feature: 'Multi-sucursal / multi-bodega', excel: false, otro: 'Extra', polaris: true },
+  { feature: 'Inventario + kardex automático', excel: false, otro: 'Básico', polaris: true },
+  { feature: 'Planilla ISSS / AFP / ISR', excel: false, otro: false, polaris: true },
+  { feature: 'Sin renta mensual', excel: true, otro: false, polaris: true },
+  { feature: 'Soporte local en El Salvador', excel: false, otro: false, polaris: true },
+  { feature: 'Actualizaciones automáticas', excel: false, otro: 'Pagadas', polaris: true },
+];
+
+const MODULES = [
+  { n: '01', name: 'Caja <em>POS</em>', desc: 'Ventas rápidas con scanner, atajos por teclado y multi-pago.', tags: ['Esc/Pos', 'F1-F12', 'Scanner'] },
+  { n: '02', name: 'DTE <em>electrónico</em>', desc: 'CF, CCF, NC, ND, retención y liquidación al Ministerio de Hacienda.', tags: ['Firma', 'MH', 'XML'] },
+  { n: '03', name: 'Inventario y <em>kardex</em>', desc: 'Multi-bodega, costos PEPS/promedio, conteo físico móvil.', tags: ['Multi-sede', 'PEPS'] },
+  { n: '04', name: 'Cuentas por <em>cobrar</em>', desc: 'Antigüedad de saldos, recordatorios y abonos parciales.', tags: ['Crédito', 'Alertas'] },
+  { n: '05', name: 'Compras y <em>proveedores</em>', desc: 'Órdenes de compra, recepción y cuentas por pagar.', tags: ['CxP', 'OC'] },
+  { n: '06', name: 'Clientes / <em>CRM</em>', desc: 'Historial de compras, segmentos y descuentos por categoría.', tags: ['Segmentos'] },
+  { n: '07', name: 'Empleados y <em>planilla</em>', desc: 'Cálculo ISSS, AFP, ISR. Constancias y boletas mensuales.', tags: ['ISSS', 'AFP', 'ISR'] },
+  { n: '08', name: 'Reportes <em>ejecutivos</em>', desc: 'Dashboards en tiempo real exportables a PDF y Excel.', tags: ['PDF', 'Excel'] },
+  { n: '09', name: 'Multi-<em>sucursal</em>', desc: 'Una vista consolidada de todas tus tiendas o restaurantes.', tags: ['Multi-tienda'] },
+  { n: '10', name: 'API & <em>conectores</em>', desc: 'Integrá tu e-commerce, contabilidad o sistema heredado.', tags: ['REST', 'Webhook'] },
+  { n: '11', name: 'Backup <em>en la nube</em>', desc: 'Respaldo diario cifrado. Recuperá tu negocio en minutos.', tags: ['Cloud', 'Cifrado'] },
+  { n: '12', name: 'Soporte <em>local</em>', desc: 'Atención en SV por WhatsApp, correo o remoto. Sin call center.', tags: ['SV', 'WhatsApp'] },
+];
+
+const QUOTES = [
+  { q: 'Pasamos de facturar a mano a emitir 80 DTE al día sin contratar más gente.', name: 'Roberto V.', role: 'Ferretería · San Salvador', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&q=80' },
+  { q: 'El cierre de mes lo hacíamos en 3 días. Ahora lo hago el último domingo en una hora.', name: 'Carla M.', role: 'Restaurante · Santa Tecla', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&q=80' },
+  { q: 'Tengo 4 sucursales y los veo todos desde el mismo panel. Antes era un caos de Excels.', name: 'Mario H.', role: 'Distribuidora · Sonsonate', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&q=80' },
+];
+
+const FAQ_ITEMS = [
+  { q: '¿Funciona sin conexión a internet?', a: 'Sí. Polaris guarda todo localmente y sincroniza solo cuando recuperás la conexión. Nunca parás de vender ni de facturar.' },
+  { q: '¿Qué pasa si Hacienda rechaza un DTE?', a: 'El sistema avisa en tiempo real con el código de error exacto del MH. Podés corregir y reenviar sin perder el correlativo ni detener la caja.' },
+  { q: '¿Cuánto cuesta instalar Polaris Enterprise?', a: 'La descarga e instalación son completamente gratis. Solo comprás paquetes de DTE electrónicos cuando los necesitás. Sin contrato, sin renta mensual.' },
+  { q: '¿Compatible con mi impresora térmica?', a: 'Soporta cualquier impresora ESC/POS: Epson, Bixolon, Star, ZKTeco, Sewoo y modelos genéricos USB o en red.' },
+  { q: '¿Puedo manejar varias sucursales desde un solo panel?', a: 'Sí. Multi-sucursal incluido sin costo adicional. Ves ventas, inventario y DTEs de todas tus tiendas consolidados en tiempo real.' },
+  { q: '¿Mis datos están seguros?', a: 'Backup diario cifrado en la nube. Tus datos también viven localmente — si el servidor cae, tu operación no para con él.' },
+];
+
+const NAV_LINKS = [
+  ['#producto', 'Producto'],
+  ['#industrias', 'Industrias'],
+  ['#dte', 'DTE'],
+  ['#precios', 'Precios'],
+  ['#descargar', 'Descargar'],
+  ['#contacto', 'Contacto'],
+];
+
+const VC_COMPARE = [
+  ['Base de datos', 'Neon PostgreSQL (nube)', 'PostgreSQL en tu PC'],
+  ['Internet requerido', 'Siempre', 'Solo al emitir DTE'],
+  ['Precio', 'Por paquetes DTE', 'Licencia única'],
+  ['Multi-sucursal', '✓ Nativo', 'Con configuración'],
+  ['Backup', 'Automático en nube', 'ZIP manual local'],
+  ['Módulos premium', 'Incluidos en plan', 'Activados remotamente'],
+  ['Activación', 'Web o descarga', 'Wizard + licencia'],
+];
+
+const HERO_BARS = [42, 64, 50, 88, 70, 95, 75];
+const PS_BARS = [42, 64, 50, 88, 70, 95, 75, 60];
+
+const WA_URL = 'https://wa.me/50300000000?text=Hola%2C%20me%20interesa%20Polaris%20Enterprise';
+const WEB_APP = 'https://polaris-web-sooty.vercel.app';
+const RELEASE_PAGE = 'https://github.com/Developer545/polaris-releases/releases/latest';
+const CLOUD_FALLBACK = 'https://github.com/Developer545/polaris-releases/releases/download/v1.0.4/Polaris-Cloud-1.0.4-win-x64.exe';
+const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/releases/download/v1.0.4/Polaris-Local-1.0.4-win-x64.exe';
 ---
 <!DOCTYPE html>
 <html lang="es-SV" class="pal-mercurio">
@@ -9,10 +111,8 @@ import App from '../components/App.jsx';
   <title>Polaris Enterprise — POS + DTE para El Salvador</title>
   <meta name="description" content="Punto de venta y facturación electrónica DTE para empresas salvadoreñas. Sin renta mensual — solo pagás los DTE que emitís." />
 
-  <!-- Canonical -->
   <link rel="canonical" href="https://polaris-landing-mu.vercel.app/" />
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Polaris Enterprise — POS + DTE para El Salvador" />
   <meta property="og:description" content="Punto de venta y facturación electrónica DTE. Sin renta mensual — solo pagás los DTE que emitís." />
@@ -21,16 +121,970 @@ import App from '../components/App.jsx';
   <meta name="twitter:title" content="Polaris Enterprise — POS + DTE para El Salvador" />
   <meta name="twitter:description" content="Software de gestión empresarial y facturación DTE para negocios salvadoreños." />
 
-  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-  <!-- Fonts: subseteado — solo pesos necesarios -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
+
+  <script is:inline>
+    // Habilita estados de animación solo cuando hay JS; evita FOUC de tema.
+    document.documentElement.classList.add('js');
+    try {
+      if (localStorage.getItem('polaris-theme') === 'noche') {
+        document.documentElement.classList.replace('pal-mercurio', 'pal-noche');
+      }
+    } catch (e) {}
+  </script>
 </head>
 <body>
-  <App client:only="react" />
+
+  <!-- ── NAV ─────────────────────────────────────────────── -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-brand">
+        <svg viewBox="0 0 100 100" width="28" height="28" aria-hidden="true" style="color:#f47920;flex-shrink:0">
+          <path fill="currentColor" d="M50,2 L56,36 L67,33 L64,44 L98,50 L64,56 L67,67 L56,64 L50,98 L44,64 L33,67 L36,56 L2,50 L36,44 L33,33 L44,36 Z" />
+          <path fill="rgba(0,0,0,.3)" d="M50,50 L50,2  L56,36 Z" />
+          <path fill="rgba(0,0,0,.3)" d="M50,50 L67,33 L64,44 Z" />
+          <path fill="rgba(0,0,0,.3)" d="M50,50 L98,50 L64,56 Z" />
+          <path fill="rgba(0,0,0,.3)" d="M50,50 L67,67 L56,64 Z" />
+          <path fill="rgba(0,0,0,.3)" d="M50,50 L50,98 L44,64 Z" />
+          <path fill="rgba(0,0,0,.3)" d="M50,50 L33,67 L36,56 Z" />
+          <path fill="rgba(0,0,0,.3)" d="M50,50 L2,50  L36,44 Z" />
+          <path fill="rgba(0,0,0,.3)" d="M50,50 L33,33 L44,36 Z" />
+          <g fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M46,40 L44,36 L46,14" /><path d="M60,46 L64,44 L82,46" />
+            <path d="M54,60 L56,64 L54,86" /><path d="M40,54 L36,56 L18,54" />
+            <path d="M56,40 L60,36 L65,33" /><path d="M60,58 L64,61 L67,65" />
+            <path d="M44,60 L40,63 L35,66" /><path d="M40,42 L36,38 L33,34" />
+          </g>
+          <g fill="rgba(255,255,255,.7)">
+            <circle cx="44" cy="36" r="2.5" /><circle cx="64" cy="44" r="2.5" />
+            <circle cx="56" cy="64" r="2.5" /><circle cx="36" cy="56" r="2.5" />
+            <circle cx="60" cy="36" r="1.7" /><circle cx="64" cy="61" r="1.7" />
+            <circle cx="40" cy="63" r="1.7" /><circle cx="36" cy="38" r="1.7" />
+          </g>
+        </svg>
+        <span>Polaris<span class="it"> Enterprise</span></span>
+      </a>
+      <div class="nav-links">
+        {NAV_LINKS.map(([href, label]) => <a href={href}>{label}</a>)}
+      </div>
+      <div class="nav-cta-group">
+        <a class="nav-login" href={WEB_APP} target="_blank" rel="noopener">Iniciar sesión</a>
+        <button class="dark-toggle" id="darkToggle" aria-label="Cambiar tema" title="Modo oscuro">
+          <span class="dt-track"><span class="dt-thumb"></span></span>
+          <span class="dt-icon">☽</span>
+        </button>
+        <a class="btn btn-ink" href="#descargar">Descargar <span class="arrow">→</span></a>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menú" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      {NAV_LINKS.map(([href, label]) => <a href={href}>{label}</a>)}
+      <div class="nav-mobile-ctas">
+        <a class="btn btn-ghost" href={WEB_APP} target="_blank" rel="noopener">Iniciar sesión</a>
+        <a class="btn btn-ink" href="#descargar">Descargar <span class="arrow">↓</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ────────────────────────────────────────────── -->
+  <header class="hero">
+    <div class="aurora-orbs" aria-hidden="true">
+      <div class="aurora-orb ao-1"></div>
+      <div class="aurora-orb ao-2"></div>
+      <div class="aurora-orb ao-3"></div>
+    </div>
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-meta" data-fx style="--fx:.05s">
+            <span class="pill"><span class="pulse"></span>Validado Hacienda · 2024</span>
+            <span class="meta-line"></span>
+            <span class="kicker">SV · POS + DTE</span>
+          </div>
+
+          <h1 class="display">
+            <span class="line" data-fx style="--fx:.12s">Tu negocio,</span>
+            <span class="line" data-fx style="--fx:.22s"><em>con norte.</em></span>
+          </h1>
+
+          <div class="hero-sub-wrap" data-fx style="--fx:.34s">
+            <span class="bracket">¶</span>
+            <p class="hero-sub">
+              El punto de venta y facturación electrónica que las empresas salvadoreñas
+              <em class="italic-serif" style="color:var(--ink)"> sí entienden.</em> Desde la
+              tiendita de la esquina hasta cadenas con varias sucursales — mismo software, configuración
+              a la medida.
+            </p>
+          </div>
+
+          <div class="hero-cta" data-fx style="--fx:.44s">
+            <a href={CLOUD_FALLBACK} class="btn btn-ink" data-dl="cloud" download rel="noopener">
+              Cloud para Windows <span class="dl-meta" data-dl-meta>(v1.0.4)</span> <span class="arrow">↓</span>
+            </a>
+            <a href={LOCAL_FALLBACK} class="btn btn-outline" data-dl="local" download rel="noopener">
+              Local para Windows <span class="dl-meta" data-dl-meta>(v1.0.4)</span> <span class="arrow">↓</span>
+            </a>
+            <a class="btn btn-ghost" href={WEB_APP} target="_blank" rel="noopener">Abrir versión web <span class="arrow">→</span></a>
+          </div>
+
+          <div class="hero-trust-row" data-fx style="--fx:.54s">
+            <span class="trust-item">Sin tarjeta de crédito</span>
+            <span class="trust-item">Instalación 2 min</span>
+            <span class="trust-item">Funciona offline</span>
+            <span class="trust-item">Soporte en SV</span>
+          </div>
+
+          <div class="scroll-indicator" data-fx style="--fx:.7s">
+            <span>scroll</span>
+            <div class="scroll-indicator-line"></div>
+          </div>
+        </div>
+
+        <div style="position:relative" data-fx style="--fx:.3s">
+          <div class="mockup-frame">
+            <div class="mockup-chrome">
+              <div class="dots"><span></span><span></span><span></span></div>
+              <div class="url">app.polarisenterprise.com/panel</div>
+            </div>
+            <div class="mockup-body">
+              <div class="mk-rail">
+                <div class="mk-rail-logo">
+                  <svg viewBox="0 0 100 100" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M50,2 L56,36 L67,33 L64,44 L98,50 L64,56 L67,67 L56,64 L50,98 L44,64 L33,67 L36,56 L2,50 L36,44 L33,33 L44,36 Z" /></svg>
+                </div>
+                <div class="mk-rail-item active" title="Panel">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                </div>
+                <div class="mk-rail-item" title="POS">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+                </div>
+                <div class="mk-rail-item" title="DTE">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 1 2V2l-1 2-3-2-3 2-3-2-3 2-3-2z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
+                </div>
+                <div class="mk-rail-item" title="Inventario">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/></svg>
+                </div>
+                <div class="mk-rail-item" title="Equipo">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+              </div>
+              <div class="mk-canvas">
+                <div class="mk-canvas-top">
+                  <div class="mk-pagename">
+                    <span class="crumb">Panel</span>
+                    <span class="crumb-sep">/</span>
+                    <span>Hoy</span>
+                  </div>
+                  <div class="mk-actions">
+                    <span class="mk-act">Filtrar</span>
+                    <span class="mk-act primary">+ Nueva venta</span>
+                  </div>
+                </div>
+                <div class="mk-kpis">
+                  <div class="mk-kpi">
+                    <div class="mk-kpi-label">Ventas hoy</div>
+                    <div class="mk-kpi-val">$2,840</div>
+                    <div class="mk-kpi-delta">↑ 12%</div>
+                  </div>
+                  <div class="mk-kpi">
+                    <div class="mk-kpi-label">DTE emitidos</div>
+                    <div class="mk-kpi-val">34</div>
+                    <div class="mk-kpi-delta">↑ 8%</div>
+                  </div>
+                  <div class="mk-kpi">
+                    <div class="mk-kpi-label">Ticket promedio</div>
+                    <div class="mk-kpi-val">$83.50</div>
+                    <div class="mk-kpi-delta" style="color:var(--ink-3)">= 0%</div>
+                  </div>
+                  <div class="mk-kpi">
+                    <div class="mk-kpi-label">Por cobrar</div>
+                    <div class="mk-kpi-val">$1,240</div>
+                    <div class="mk-kpi-delta" style="color:var(--accent-2)">↓ 4%</div>
+                  </div>
+                </div>
+                <div class="mk-chart-card">
+                  <div class="mk-chart-head">
+                    <span class="mk-chart-title">Ventas por hora</span>
+                    <span class="mk-chart-range">07:00 — 19:00</span>
+                  </div>
+                  <div class="mk-chart">
+                    {HERO_BARS.map((h, i) => (
+                      <div class={'mk-bar' + (h > 80 ? ' warm' : i % 2 ? ' hi' : '')} style={`height:${h}%`}></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mockup-tickets">
+            <div class="ticket" data-fx style="--fx:.9s">
+              <div class="tk-icon">✓</div>
+              <div class="tk-body">
+                <div class="tk-id">DTE-01-00234</div>
+                <div class="tk-total">$245.30</div>
+              </div>
+            </div>
+            <div class="ticket" data-fx style="--fx:1.1s">
+              <div class="tk-icon">✓</div>
+              <div class="tk-body">
+                <div class="tk-id">DTE-03-00089</div>
+                <div class="tk-total">$1,820.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MARQUEE ─────────────────────────────────────────── -->
+  <div class="marquee-wrap">
+    <div class="marquee" style="animation-duration:32s">
+      {MARQUEE.map((t) => (
+        <span class="marquee-item">
+          <span class="glyph">✦</span>
+          <span>{t}</span>
+        </span>
+      ))}
+    </div>
+  </div>
+
+  <!-- ── STATS ───────────────────────────────────────────── -->
+  <div class="stats-section">
+    <div class="container">
+      <div class="stats-grid" data-reveal-group>
+        {STATS.map((s) => (
+          <div class="stat-item">
+            <div class="stat-num">
+              <span data-count={s.num} data-decimals={s.dec}>{s.dec ? s.num.toFixed(s.dec) : s.num.toLocaleString('es-SV')}</span>{s.suffix}
+            </div>
+            <div class="stat-label">{s.label}</div>
+            <div class="stat-sub">{s.sub}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOGO WALL ───────────────────────────────────────── -->
+  <div class="logo-wall">
+    <div class="container">
+      <p class="logo-wall-eyebrow" data-reveal>Negocios salvadoreños que ya usan Polaris Enterprise</p>
+      <div class="logo-wall-grid" data-reveal-group>
+        {LOGOS.map((l) => (
+          <div class="logo-tile">
+            <span class="logo-tile-sector">{l.sector}</span>
+            <span class="logo-tile-name">{l.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BENTO / PRODUCTO ────────────────────────────────── -->
+  <section class="section" id="producto">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">01</span>
+          <span class="label">/ Producto</span>
+        </div>
+        <div>
+          <h2 class="display">Un sistema. <span class="alt">Toda</span> tu operación.</h2>
+          <p class="desc">
+            Polaris Enterprise reemplaza tu Excel, tu hoja de pedidos, tu cuaderno de cuentas por cobrar y
+            tu sistema viejo de facturación — en una sola instalación de Windows que tu cajero
+            entiende en minutos.
+          </p>
+        </div>
+      </div>
+
+      <div class="bento" data-reveal-group>
+        <div class="bento-cell span-4 dark">
+          <div class="bento-bg-img" aria-hidden="true">
+            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&q=60" alt="" loading="lazy" />
+          </div>
+          <div>
+            <div class="glyph">A — Punto de venta</div>
+            <h3 class="cell-title">Caja registradora <em>que no te frena.</em></h3>
+            <div class="cell-desc">
+              Procesá ventas con teclado, scanner y display al cliente. Pausá tickets, dividí cuentas,
+              aplicá descuentos. Soporta efectivo, tarjeta, transferencia y vales en el mismo cobro.
+            </div>
+          </div>
+          <div class="chip-row" style="margin-top:24px">
+            <span class="chip">F1 Nueva venta</span>
+            <span class="chip">F2 Buscar</span>
+            <span class="chip">F4 Cobrar</span>
+            <span class="chip">F8 Imprimir</span>
+            <span class="chip">+4</span>
+          </div>
+        </div>
+
+        <div class="bento-cell span-2">
+          <div>
+            <div class="glyph">B — DTE</div>
+            <h3 class="cell-title">6 tipos <em>aprobados.</em></h3>
+            <div class="cell-desc">CF, CCF, NC, ND, retención, liquidación. Transmisión en segundos.</div>
+          </div>
+        </div>
+
+        <div class="bento-cell span-2">
+          <div>
+            <div class="glyph">C — Inventario</div>
+            <h3 class="cell-title">Stock <em>en tiempo real.</em></h3>
+            <div class="cell-desc">Kardex automático con cada venta. Multi-bodega. Alertas de stock bajo.</div>
+          </div>
+          <div class="cell-art" style="right:24px;top:24px">∞</div>
+        </div>
+
+        <div class="bento-cell span-2">
+          <div>
+            <div class="glyph">D — Reportes</div>
+            <h3 class="cell-title">Sin <em>abrir Excel.</em></h3>
+            <div class="cell-desc">Dashboard ejecutivo. KPIs por hora, día, mes. Exporta en 1 click.</div>
+          </div>
+        </div>
+
+        <div class="bento-cell span-2">
+          <div>
+            <div class="glyph">E — Offline first</div>
+            <h3 class="cell-title">Si se cae <em>internet.</em></h3>
+            <div class="cell-desc">Seguís facturando. Polaris Enterprise sincroniza solo cuando vuelve la conexión.</div>
+          </div>
+        </div>
+
+        <div class="bento-cell span-2">
+          <div>
+            <div class="glyph">F — Multi-usuario</div>
+            <h3 class="cell-title">Roles <em>granulares.</em></h3>
+            <div class="cell-desc">Admin, cajero, vendedor, bodega, contador. Permisos al detalle. Auditoría.</div>
+          </div>
+        </div>
+
+        <div class="bento-cell span-2">
+          <div>
+            <div class="glyph">G — Hardware</div>
+            <h3 class="cell-title">Plug <em>& play.</em></h3>
+            <div class="cell-desc">Impresoras térmicas, scanners, cajón monedero, gaveta de billetes.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-showcase" data-reveal-group>
+        <div class="ps-card">
+          <div class="ps-screen">
+            <div class="ps-screen-head">
+              <span class="ps-dot r"></span><span class="ps-dot y"></span><span class="ps-dot g"></span>
+              <span class="ps-title">panel</span>
+            </div>
+            <div class="ps-kpi-row">
+              <div class="ps-kpi"><div class="ps-kpi-v">$2,840</div><div class="ps-kpi-l">Ventas hoy</div></div>
+              <div class="ps-kpi"><div class="ps-kpi-v">34</div><div class="ps-kpi-l">DTE</div></div>
+              <div class="ps-kpi"><div class="ps-kpi-v hi">↑12%</div><div class="ps-kpi-l">vs ayer</div></div>
+            </div>
+            <div class="ps-bars">
+              {PS_BARS.map((h) => (
+                <div class={'ps-bar' + (h > 80 ? ' hi' : '')} style={`height:${h}%`}></div>
+              ))}
+            </div>
+          </div>
+          <div class="ps-label">Panel ejecutivo</div>
+        </div>
+
+        <div class="ps-card">
+          <div class="ps-screen">
+            <div class="ps-screen-head">
+              <span class="ps-dot r"></span><span class="ps-dot y"></span><span class="ps-dot g"></span>
+              <span class="ps-title">pos</span>
+            </div>
+            <div class="ps-pos">
+              <div class="ps-pos-row"><span>Coca-Cola 600ml</span><span class="ps-pos-price">$1.25</span></div>
+              <div class="ps-pos-row"><span>Pan francés ×4</span><span class="ps-pos-price">$2.00</span></div>
+              <div class="ps-pos-row"><span>Agua purificada</span><span class="ps-pos-price">$0.75</span></div>
+              <div class="ps-pos-total">Total · <strong>$4.00</strong></div>
+              <div class="ps-emit-btn">Cobrar y emitir DTE →</div>
+            </div>
+          </div>
+          <div class="ps-label">Punto de venta</div>
+        </div>
+
+        <div class="ps-card">
+          <div class="ps-screen">
+            <div class="ps-screen-head">
+              <span class="ps-dot r"></span><span class="ps-dot y"></span><span class="ps-dot g"></span>
+              <span class="ps-title">dte</span>
+            </div>
+            <div class="ps-dte">
+              <div class="ps-dte-badge">✓ Transmitido · Ministerio de Hacienda</div>
+              <div class="ps-dte-row">DTE-01-00234 · CCF</div>
+              <div class="ps-dte-row">Ferretería Los Ceibos</div>
+              <div class="ps-dte-amount">$245.30</div>
+              <div class="ps-dte-code">SELLO: 2024-0BF2A3...C9</div>
+            </div>
+          </div>
+          <div class="ps-label">Facturación DTE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INDUSTRIAS (isla React) ─────────────────────────── -->
+  <section class="section" id="industrias">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">02</span>
+          <span class="label">/ Industrias</span>
+        </div>
+        <div>
+          <h2 class="display"><em>Tu</em> negocio. Polaris Enterprise se adapta.</h2>
+          <p class="desc">
+            Elegí tu giro y mirá cómo cambia el POS. Misma instalación, distintos productos, distintos flujos —
+            configuración a medida sin pagar extra.
+          </p>
+        </div>
+      </div>
+      <IndustriesToggle client:visible />
+    </div>
+  </section>
+
+  <!-- ── FUNCIONES (isla React) ──────────────────────────── -->
+  <section class="section" id="dte">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">03</span>
+          <span class="label">/ Funciones</span>
+        </div>
+        <div>
+          <h2 class="display">Las funciones <em>que sí</em> usás.</h2>
+          <p class="desc">Cinco pilares construidos para el mercado salvadoreño. Nada que adornar; todo que vender.</p>
+        </div>
+      </div>
+      <FeatureTabs client:visible />
+    </div>
+  </section>
+
+  <!-- ── COMPARACIÓN ─────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" style="grid-template-columns:1fr" data-reveal>
+        <div>
+          <h2 class="display">¿Por qué no seguir <em>con Excel?</em></h2>
+          <p class="desc" style="margin-top:16px">Una comparación directa — sin letra pequeña, sin vendedores en el teléfono.</p>
+        </div>
+      </div>
+      <div class="cmp-table-wrap" data-reveal>
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th class="cmp-feature-col">Funcionalidad</th>
+              <th>Excel + Hacienda manual</th>
+              <th>Otro sistema del mercado</th>
+              <th class="cmp-polaris-col">Polaris Enterprise</th>
+            </tr>
+          </thead>
+          <tbody>
+            {CMP_ROWS.map((r) => (
+              <tr>
+                <td class="cmp-feature">{r.feature}</td>
+                <td>{r.excel === true ? <span class="cmp-yes">✓</span> : r.excel === false ? <span class="cmp-no">✗</span> : <span class="cmp-partial">{r.excel}</span>}</td>
+                <td>{r.otro === true ? <span class="cmp-yes">✓</span> : r.otro === false ? <span class="cmp-no">✗</span> : <span class="cmp-partial">{r.otro}</span>}</td>
+                <td class="cmp-polaris-cell"><span class="cmp-yes">✓</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MÓDULOS ─────────────────────────────────────────── -->
+  <section class="section" id="modulos">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">04</span>
+          <span class="label">/ Módulos</span>
+        </div>
+        <div>
+          <h2 class="display">Doce módulos, <span class="alt">una sola</span> instalación.</h2>
+          <p class="desc">
+            No vendemos add-ons. Todo viene incluido el día que instalás Polaris Enterprise — vos activás
+            los módulos a medida que tu negocio los necesita.
+          </p>
+        </div>
+      </div>
+      <div class="modules-grid" data-reveal-group>
+        {MODULES.map((m) => (
+          <div class="module-tile">
+            <span class="m-num">/{m.n}</span>
+            <div class="m-name" set:html={m.name}></div>
+            <div class="m-desc">{m.desc}</div>
+            <div class="m-tags">
+              {m.tags.map((t) => <span class="m-tag">{t}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ARMÁ TU PLAN (isla React) ───────────────────────── -->
+  <section class="section" id="modulos-precio">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">04b</span>
+          <span class="label">/ Armá tu plan</span>
+        </div>
+        <div>
+          <h2 class="display">Módulos <em>a la medida.</em></h2>
+          <p class="desc">
+            Empezás con DTE y vas activando lo que necesitás. Sin contratos atados —
+            cada módulo es un add-on mensual sobre tu plan de facturación.
+          </p>
+        </div>
+      </div>
+      <ModuleBuilder client:visible />
+    </div>
+  </section>
+
+  <!-- ── CALCULADORA (isla React) ────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">05</span>
+          <span class="label">/ Calculadora DTE</span>
+        </div>
+        <div>
+          <h2 class="display">¿Cuánto te va a <em>costar?</em> Lo calculamos.</h2>
+          <p class="desc">Movés el slider con tu volumen mensual y te decimos el pack óptimo. Cero teléfonos, cero esperar cotización.</p>
+        </div>
+      </div>
+      <DTECalculator client:visible />
+    </div>
+  </section>
+
+  <!-- ── PRECIOS ─────────────────────────────────────────── -->
+  <section class="section" id="precios">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">06</span>
+          <span class="label">/ Precios</span>
+        </div>
+        <div>
+          <h2 class="display">Pagás por DTE. <em>Punto.</em></h2>
+          <p class="desc">
+            Sin licencias mensuales escondidas. Polaris Enterprise es <b>gratis</b> de descargar e instalar — solo comprás paquetes de DTE
+            electrónicos cuando los necesitás. Tu saldo no expira.
+          </p>
+        </div>
+      </div>
+
+      <div class="pricing-banner" data-reveal>
+        <span class="pb-glyph">$</span>
+        <div>
+          <div class="pb-title">El POS y los módulos son <em>gratis</em>. Solo pagás los DTE que emitís.</div>
+          <div class="pb-desc">Si nunca facturás electrónico, nunca nos pagás. Si facturás 10,000 al mes — el costo unitario es el más bajo del mercado salvadoreño.</div>
+        </div>
+        <div class="pb-meta">Sin licencias · Sin renta</div>
+      </div>
+
+      <div class="pricing-grid" data-reveal-group>
+        {PACKS.slice(0, 6).map((p, i) => (
+          <div class={'pack' + (i === 2 ? ' recommended' : '')}>
+            <div class="pk-num">/{String(i + 1).padStart(2, '0')}</div>
+            <div class="pk-count">{p.count.toLocaleString('es-SV')}</div>
+            <div class="pk-label">DTE electrónicos</div>
+            <div class="pk-price">${p.price.toFixed(2)}</div>
+            <div class="pk-per">${(p.price / p.count).toFixed(3)} c/u · {p.sup}</div>
+            <a href="#contacto" class="pk-cta">{i === 2 ? 'Empezar →' : 'Elegir'}</a>
+          </div>
+        ))}
+      </div>
+
+      <p style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:22px;letter-spacing:.04em">
+        Todos los packs incluyen acceso completo al POS, ERP, DTE electrónico y actualizaciones automáticas · tu saldo NUNCA expira
+      </p>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIOS ─────────────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">07</span>
+          <span class="label">/ Lo que dicen</span>
+        </div>
+        <div>
+          <h2 class="display">Negocios <em>reales,</em> resultados <span class="alt">reales.</span></h2>
+          <p class="desc">Estas son citas representativas — pediles los datos completos a nuestro equipo.</p>
+        </div>
+      </div>
+      <div class="quotes-grid" data-reveal-group>
+        {QUOTES.map((qq) => (
+          <div class="quote-card">
+            <div class="q-mark">"</div>
+            <blockquote>{qq.q}</blockquote>
+            <div class="q-by">
+              <div class="q-avatar"><img src={qq.img} alt={qq.name} loading="lazy" /></div>
+              <div>
+                <div class="q-name">{qq.name}</div>
+                <div class="q-role">{qq.role}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ─────────────────────────────────────────────── -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">08</span>
+          <span class="label">/ FAQ</span>
+        </div>
+        <div>
+          <h2 class="display">Preguntas <em>frecuentes.</em></h2>
+          <p class="desc">Las mismas que nos hacen todos los días — respondidas aquí.</p>
+        </div>
+      </div>
+      <div class="faq-list" data-reveal-group>
+        {FAQ_ITEMS.map((item) => (
+          <div class="faq-item">
+            <button class="faq-trigger">
+              <span>{item.q}</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">{item.a}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DESCARGA / VERSIONES ────────────────────────────── -->
+  <section class="section" id="descargar">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">09</span>
+          <span class="label">/ Descarga</span>
+        </div>
+        <div>
+          <h2 class="display">Elegí tu <em>versión.</em></h2>
+          <p class="desc">
+            Dos versiones del mismo software — adaptadas a tu infraestructura. Sin pagar doble, sin cambiar de sistema.
+          </p>
+        </div>
+      </div>
+
+      <div class="version-cards" data-reveal-group>
+        <div class="version-card">
+          <div class="vc-badge cloud">Cloud</div>
+          <div class="vc-name">Polaris <em>Enterprise</em></div>
+          <div class="vc-tagline">Tu POS conectado a la nube de Speeddan</div>
+          <ul class="vc-list">
+            <li><span class="vc-check">✓</span> Acceso desde cualquier PC — sin instalar</li>
+            <li><span class="vc-check">✓</span> BD en la nube — zero mantenimiento</li>
+            <li><span class="vc-check">✓</span> Multi-sucursal sincronizado en tiempo real</li>
+            <li><span class="vc-check">✓</span> Actualizaciones automáticas silenciosas</li>
+            <li><span class="vc-check">✓</span> Soporte técnico incluido</li>
+            <li><span class="vc-neutral">~</span> Requiere internet para funcionar</li>
+          </ul>
+          <div class="vc-note">Ideal para negocios con conexión estable y varias sucursales.</div>
+          <div class="vc-actions">
+            <a href={CLOUD_FALLBACK} class="btn btn-ink" data-dl="cloud" download rel="noopener">
+              Descargar Polaris Cloud <span class="dl-meta" data-dl-meta>(v1.0.4)</span> <span class="arrow">↓</span>
+            </a>
+            <a class="btn btn-ghost" href={WEB_APP} target="_blank" rel="noopener">
+              Abrir versión web <span class="arrow">→</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="version-card local-card">
+          <div class="vc-badge local">Local · Nuevo</div>
+          <div class="vc-name">Polaris <em>Local</em></div>
+          <div class="vc-tagline">Todo en tu PC — sin depender de servidores</div>
+          <ul class="vc-list">
+            <li><span class="vc-check">✓</span> Funciona <strong>100% offline</strong> — BD en tu PC</li>
+            <li><span class="vc-check">✓</span> DTE requiere internet solo al emitir</li>
+            <li><span class="vc-check">✓</span> Pago único de licencia — sin mensualidades</li>
+            <li><span class="vc-check">✓</span> Datos en tu máquina — máxima privacidad</li>
+            <li><span class="vc-check">✓</span> Wizard de instalación guiada en 5 min</li>
+            <li><span class="vc-check">✓</span> Backups manuales en ZIP local</li>
+          </ul>
+          <div class="vc-note">Ideal para emprendedores individuales sin servidor propio.</div>
+          <div class="vc-actions">
+            <a href={LOCAL_FALLBACK} class="btn btn-accent" data-dl="local" download rel="noopener">
+              Descargar Polaris Local <span class="dl-meta" data-dl-meta>(v1.0.4)</span> <span class="arrow">↓</span>
+            </a>
+            <a class="btn btn-ghost" href="#contacto">
+              Solicitar licencia <span class="arrow">→</span>
+            </a>
+          </div>
+          <div class="vc-req">
+            <strong>Requisitos:</strong> Windows 10/11 · PostgreSQL 14+ · 4 GB RAM · 2 GB espacio
+          </div>
+        </div>
+      </div>
+
+      <div class="vc-compare" data-reveal>
+        <table class="cmp-table" style="margin-top:40px">
+          <thead>
+            <tr>
+              <th class="cmp-feature-col">Característica</th>
+              <th>Enterprise (Cloud)</th>
+              <th class="cmp-polaris-col">Local</th>
+            </tr>
+          </thead>
+          <tbody>
+            {VC_COMPARE.map(([feat, cloud, local]) => (
+              <tr>
+                <td class="cmp-feature">{feat}</td>
+                <td>{cloud}</td>
+                <td class="cmp-polaris-cell">{local}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACTO ────────────────────────────────────────── -->
+  <section class="section" id="contacto">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div class="meta">
+          <span class="num">10</span>
+          <span class="label">/ Hablemos</span>
+        </div>
+        <div>
+          <h2 class="display"><em>Decinos</em> de qué trata tu negocio.</h2>
+          <p class="desc">Respondemos en menos de 24 horas — usualmente mucho antes. Sin formularios largos ni call center.</p>
+        </div>
+      </div>
+
+      <div class="contact-grid" data-reveal-group>
+        <a class="contact-card wa" href={WA_URL} target="_blank" rel="noopener">
+          <span class="c-num">/01 — WhatsApp</span>
+          <span class="c-name">Escribinos al <em>WhatsApp</em></span>
+          <span class="c-meta">+503 0000-0000 · L–V 8am–6pm</span>
+          <span class="c-arrow">↗</span>
+        </a>
+        <a class="contact-card" href="mailto:hola@polarisenterprise.com">
+          <span class="c-num">/02 — Correo</span>
+          <span class="c-name">Correo <em>directo.</em></span>
+          <span class="c-meta">hola@polarisenterprise.com · respuesta &lt; 24h</span>
+          <span class="c-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA FINAL ───────────────────────────────────────── -->
+  <section class="cta-final">
+    <div class="container cta-final-inner" data-reveal>
+      <h2 class="display">Tu negocio, <em>con norte.</em></h2>
+      <p>Dos versiones. Un solo software. Empezá hoy.</p>
+      <div class="cta-actions">
+        <a href={CLOUD_FALLBACK} class="btn btn-ink" data-dl="cloud" download rel="noopener">Enterprise — Windows <span class="arrow">↓</span></a>
+        <a href={LOCAL_FALLBACK} class="btn btn-outline" data-dl="local" download rel="noopener">Local — Windows <span class="arrow">↓</span></a>
+        <a href={WEB_APP} target="_blank" rel="noopener" class="btn btn-ghost">Versión web <span class="arrow">→</span></a>
+      </div>
+      <div class="post-cta">
+        <span>Windows 10 / 11</span>
+        <span>Instalación 2 min</span>
+        <span>Actualizaciones automáticas</span>
+        <span>Soporte en SV</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ──────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="#" class="nav-brand" style="margin-bottom:0">
+            <svg viewBox="0 0 100 100" width="28" height="28" aria-hidden="true" style="color:#f47920;flex-shrink:0">
+              <path fill="currentColor" d="M50,2 L56,36 L67,33 L64,44 L98,50 L64,56 L67,67 L56,64 L50,98 L44,64 L33,67 L36,56 L2,50 L36,44 L33,33 L44,36 Z" />
+            </svg>
+            <span>Polaris<span class="it"> Enterprise</span></span>
+          </a>
+          <div class="footer-brand-text">El software que las empresas <em class="italic-serif" style="color:var(--accent)">salvadoreñas</em> sí entienden.</div>
+        </div>
+        <div class="footer-col">
+          <h4>Producto</h4>
+          <ul>
+            <li><a href="#producto">Caja / POS</a></li>
+            <li><a href="#dte">DTE</a></li>
+            <li><a href="#modulos">Módulos</a></li>
+            <li><a href="#precios">Precios</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Empresa</h4>
+          <ul>
+            <li><a href="#contacto">Contacto</a></li>
+            <li><a href="#">Sobre nosotros</a></li>
+            <li><a href="#">Carreras</a></li>
+            <li><a href="#">Prensa</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Soporte</h4>
+          <ul>
+            <li><a href="#">Documentación</a></li>
+            <li><a href="#">Cambios y versiones</a></li>
+            <li><a href="#">Estado del servicio</a></li>
+            <li><a href="#">Privacidad</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Speeddan System — Hecho en El Salvador</span>
+        <span>v2.0 · Junio 2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <a class="wa-float" href={WA_URL} target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <script>
+    /* ── Reveal: IntersectionObserver, una sola vez ──────── */
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        const el = e.target as HTMLElement;
+        if (el.hasAttribute('data-reveal-group')) {
+          Array.from(el.children).forEach((child, i) => {
+            (child as HTMLElement).style.setProperty('--rd', `${Math.min(i * 0.07, 0.6)}s`);
+          });
+        }
+        el.classList.add('is-in');
+        io.unobserve(el);
+      }
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+    document.querySelectorAll('[data-reveal], [data-reveal-group]').forEach((el) => io.observe(el));
+
+    /* ── CountUp en stats ─────────────────────────────────── */
+    const statsIO = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        statsIO.unobserve(e.target);
+        e.target.querySelectorAll('[data-count]').forEach((node) => {
+          const to = parseFloat((node as HTMLElement).dataset.count || '0');
+          const dec = parseInt((node as HTMLElement).dataset.decimals || '0', 10);
+          const t0 = performance.now();
+          const dur = 1400;
+          const tick = (t: number) => {
+            const p = Math.min(1, (t - t0) / dur);
+            const eased = 1 - Math.pow(1 - p, 3);
+            const v = to * eased;
+            node.textContent = dec > 0 ? v.toFixed(dec) : Math.round(v).toLocaleString('es-SV');
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        });
+      }
+    }, { threshold: 0.3 });
+    const statsSection = document.querySelector('.stats-section');
+    if (statsSection) statsIO.observe(statsSection);
+
+    /* ── Nav: estado scrolled + menú móvil ───────────────── */
+    const nav = document.getElementById('nav');
+    let scrolledState = false;
+    addEventListener('scroll', () => {
+      const s = scrollY > 10;
+      if (s !== scrolledState) {
+        scrolledState = s;
+        nav?.classList.toggle('scrolled', s);
+      }
+    }, { passive: true });
+
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    hamburger?.addEventListener('click', () => {
+      const open = mobileMenu?.classList.toggle('open');
+      hamburger.classList.toggle('open', !!open);
+      hamburger.setAttribute('aria-expanded', String(!!open));
+    });
+    mobileMenu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      hamburger?.classList.remove('open');
+    }));
+
+    /* ── Tema oscuro ─────────────────────────────────────── */
+    const darkToggle = document.getElementById('darkToggle');
+    const syncToggle = () => {
+      const dark = document.documentElement.classList.contains('pal-noche');
+      darkToggle?.classList.toggle('dark-toggle-on', dark);
+      const icon = darkToggle?.querySelector('.dt-icon');
+      if (icon) icon.textContent = dark ? '☀' : '☽';
+    };
+    syncToggle();
+    darkToggle?.addEventListener('click', () => {
+      const html = document.documentElement;
+      const dark = html.classList.contains('pal-noche');
+      html.classList.replace(dark ? 'pal-noche' : 'pal-mercurio', dark ? 'pal-mercurio' : 'pal-noche');
+      try { localStorage.setItem('polaris-theme', dark ? 'mercurio' : 'noche'); } catch (e) {}
+      syncToggle();
+    });
+
+    /* ── FAQ accordion ───────────────────────────────────── */
+    document.querySelectorAll('.faq-item').forEach((item) => {
+      item.querySelector('.faq-trigger')?.addEventListener('click', () => {
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach((o) => o.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+
+    /* ── Descargas: versión real desde GitHub Releases ───── */
+    const RELEASE_API = 'https://api.github.com/repos/Developer545/polaris-releases/releases/latest';
+    fetch(RELEASE_API)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data?.assets) return;
+        const pick = (kind: string) => data.assets.find((a: any) => {
+          const n = (a.name || '').toLowerCase();
+          if (!n.endsWith('.exe')) return false;
+          return kind === 'local' ? n.includes('local') : (n.includes('cloud') || !n.includes('local'));
+        });
+        for (const kind of ['cloud', 'local']) {
+          const asset = pick(kind);
+          if (!asset) continue;
+          const size = asset.size ? `${Math.round(asset.size / 1024 / 1024)} MB` : '';
+          document.querySelectorAll(`[data-dl="${kind}"]`).forEach((a) => {
+            (a as HTMLAnchorElement).href = asset.browser_download_url;
+            const meta = a.querySelector('[data-dl-meta]');
+            if (meta) meta.textContent = `(${data.tag_name || ''}${size ? ' · ' + size : ''})`;
+          });
+        }
+      })
+      .catch(() => {});
+  </script>
 </body>
 </html>
