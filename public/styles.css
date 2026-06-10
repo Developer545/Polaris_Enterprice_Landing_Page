@@ -2946,3 +2946,114 @@ html.js .hero [data-fx] {
 
 /* Meta de versión/tamaño dentro de botones de descarga */
 .dl-meta { font-size: .76em; opacity: .6; font-weight: 400; }
+
+/* ============================================================
+   V2.1 VISUAL REFRESH — identidad de marca Polaris
+   Naranja oficial #f47920 como acento unificado.
+   Claro: porcelana cálida + navy profundo (cielo de la estrella polar)
+   Oscuro: cielo nocturno + naranja estelar
+   ============================================================ */
+
+.pal-mercurio {
+  --canvas: #f5f2ea;
+  --paper:  #fdfcf7;
+  --feature:#ede8db;
+  --feature-2:#e3dcc9;
+  --ink:    #14130e;
+  --ink-2:  #3b3930;
+  --ink-3:  #6f6b5d;
+  --ink-4:  #a39e8e;
+  --line:   #ddd7c6;
+  --line-2: #eae5d6;
+  --accent: #1b2348;       /* navy polaris — estructura, botones, em */
+  --accent-2: #e8650c;     /* naranja marca (profundizado p/ contraste) */
+  --warm:   #d99a1f;
+}
+
+.pal-noche {
+  --canvas:    #08070c;
+  --paper:     #100f17;
+  --feature:   #16141f;
+  --feature-2: #1c1928;
+  --ink:       #f2efe8;
+  --ink-2:     #b8b3a6;
+  --ink-3:     #7d7869;
+  --ink-4:     #45414a;
+  --line:      #232030;
+  --line-2:    #1a1826;
+  --accent:    #ff8a3d;    /* naranja estelar — brilla sobre la noche */
+  --accent-2:  #8a9dff;    /* contrapunto azul estrella */
+  --warm:      #ffc95c;
+}
+
+/* Selección de texto con marca */
+::selection { background: color-mix(in oklab, #f47920 30%, transparent); }
+
+/* ── Grano estático — SVG turbulence, cero JS, pinta una vez ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  mix-blend-mode: overlay;
+  opacity: .26;
+}
+.pal-noche body::after { opacity: .14; }
+
+/* ── Orbes del hero — recoloreados a marca ──────────────────── */
+.pal-mercurio .ao-1,
+.ao-1 { background: radial-gradient(circle, rgba(27,35,72,.10) 0%, transparent 68%); }
+.pal-mercurio .ao-2,
+.ao-2 { background: radial-gradient(circle, rgba(244,121,32,.10) 0%, transparent 68%); }
+.pal-mercurio .ao-3,
+.ao-3 { background: radial-gradient(circle, rgba(217,154,31,.07) 0%, transparent 68%); }
+.pal-noche .ao-1 { background: radial-gradient(circle, rgba(255,138,61,.16) 0%, transparent 68%); }
+.pal-noche .ao-2 { background: radial-gradient(circle, rgba(138,157,255,.12) 0%, transparent 68%); }
+.pal-noche .ao-3 { background: radial-gradient(circle, rgba(255,201,92,.08) 0%, transparent 68%); }
+
+/* ── Tipografía: contención enterprise ──────────────────────── */
+h1.display { font-size: clamp(64px, 8.6vw, 126px); letter-spacing: -0.03em; }
+h2.display { font-size: clamp(40px, 5.8vw, 78px); letter-spacing: -0.028em; }
+.hero-sub { font-size: 17px; line-height: 1.65; }
+.display em { color: var(--accent-2); }
+.pal-noche .display em { color: var(--accent); }
+
+/* ── Botón primario con la marca ────────────────────────────── */
+.btn-ink { background: var(--ink); color: var(--canvas); }
+.btn-ink:hover { background: var(--accent-2); color: #fff; transform: translateY(-1px); }
+.pal-noche .btn-ink { background: var(--accent); color: #14130e; }
+.pal-noche .btn-ink:hover { background: var(--warm); color: #14130e; }
+.btn-accent { background: var(--accent-2); color: #fff; }
+.btn-accent:hover { background: var(--ink); color: var(--canvas); transform: translateY(-1px); }
+
+/* ── Tratamiento fotográfico unificado — duotono cálido ─────── */
+.ind-thumb img,
+.industry-tab img,
+.iph-img img {
+  filter: grayscale(.3) sepia(.14) saturate(1.18) contrast(1.04);
+}
+/* Bento conserva oscurecido para legibilidad + duotono cálido */
+.bento-bg-img img {
+  filter: grayscale(.35) sepia(.15) saturate(1.1) contrast(1.05) brightness(.55);
+  opacity: 0.4;
+}
+.bento-cell.dark:hover .bento-bg-img img {
+  filter: grayscale(.25) sepia(.15) saturate(1.15) contrast(1.05) brightness(.62);
+  opacity: 0.48;
+}
+.q-avatar img { filter: grayscale(.2) sepia(.08) saturate(1.1); }
+
+/* ── Detalles de marca en componentes clave ─────────────────── */
+.logo-tile:hover { border-color: var(--accent-2); }
+.logo-tile:hover .logo-tile-sector { color: var(--accent-2); }
+.stat-num { color: var(--ink); }
+.stat-num span { color: var(--accent-2); }
+.pal-noche .stat-num span { color: var(--accent); }
+.pack.recommended { border-color: var(--accent-2); }
+.faq-item.open .faq-icon { color: var(--accent-2); }
+.marquee-item .glyph { color: var(--accent-2); }
+.bento-cell.dark .cell-desc { color: rgba(255,255,255,.82); }
+.bento-cell.dark .glyph { color: var(--accent-2); }
