@@ -45,19 +45,18 @@ const CMP_ROWS = [
   { feature: 'Actualizaciones automáticas', excel: false, otro: 'Pagadas', polaris: true },
 ];
 
+/* Módulos BASE reales — incluidos en toda instalación (registro Polaris) */
 const MODULES = [
   { n: '01', name: 'Caja <em>POS</em>', desc: 'Ventas rápidas con scanner, atajos por teclado y multi-pago.', tags: ['Esc/Pos', 'F1-F12', 'Scanner'] },
   { n: '02', name: 'DTE <em>electrónico</em>', desc: 'CF, CCF, NC, ND, retención y liquidación al Ministerio de Hacienda.', tags: ['Firma', 'MH', 'XML'] },
-  { n: '03', name: 'Inventario y <em>kardex</em>', desc: 'Multi-bodega, costos PEPS/promedio, conteo físico móvil.', tags: ['Multi-sede', 'PEPS'] },
-  { n: '04', name: 'Cuentas por <em>cobrar</em>', desc: 'Antigüedad de saldos, recordatorios y abonos parciales.', tags: ['Crédito', 'Alertas'] },
-  { n: '05', name: 'Compras y <em>proveedores</em>', desc: 'Órdenes de compra, recepción y cuentas por pagar.', tags: ['CxP', 'OC'] },
-  { n: '06', name: 'Clientes / <em>CRM</em>', desc: 'Historial de compras, segmentos y descuentos por categoría.', tags: ['Segmentos'] },
-  { n: '07', name: 'Empleados y <em>planilla</em>', desc: 'Cálculo ISSS, AFP, ISR. Constancias y boletas mensuales.', tags: ['ISSS', 'AFP', 'ISR'] },
-  { n: '08', name: 'Reportes <em>ejecutivos</em>', desc: 'Dashboards en tiempo real exportables a PDF y Excel.', tags: ['PDF', 'Excel'] },
-  { n: '09', name: 'Multi-<em>sucursal</em>', desc: 'Una vista consolidada de todas tus tiendas o restaurantes.', tags: ['Multi-tienda'] },
-  { n: '10', name: 'API & <em>conectores</em>', desc: 'Integrá tu e-commerce, contabilidad o sistema heredado.', tags: ['REST', 'Webhook'] },
-  { n: '11', name: 'Backup <em>en la nube</em>', desc: 'Respaldo diario cifrado. Recuperá tu negocio en minutos.', tags: ['Cloud', 'Cifrado'] },
-  { n: '12', name: 'Soporte <em>local</em>', desc: 'Atención en SV por WhatsApp, correo o remoto. Sin call center.', tags: ['SV', 'WhatsApp'] },
+  { n: '03', name: '<em>Ventas</em> e historial', desc: 'Registro completo de ventas, anulaciones y notas de crédito.', tags: ['Historial', 'NC/ND'] },
+  { n: '04', name: 'Turnos de <em>caja</em>', desc: 'Apertura, arqueo y cierre de caja por usuario y por turno.', tags: ['Arqueo', 'Cierre'] },
+  { n: '05', name: 'Inventario y <em>kardex</em>', desc: 'Kardex automático con cada venta, multi-bodega y alertas de stock.', tags: ['Multi-bodega', 'Kardex'] },
+  { n: '06', name: '<em>Productos</em>', desc: 'Catálogo con códigos de barra, categorías y listas de precios.', tags: ['Barcode', 'Precios'] },
+  { n: '07', name: '<em>Servicios</em>', desc: 'Catálogo de servicios facturables con precios por tipo.', tags: ['Facturables'] },
+  { n: '08', name: '<em>Clientes</em>', desc: 'Historial de compras, datos fiscales y límites de crédito.', tags: ['Crédito', 'Fiscal'] },
+  { n: '09', name: '<em>Proveedores</em>', desc: 'Catálogo de proveedores con contactos y condiciones de pago.', tags: ['Contactos'] },
+  { n: '10', name: '<em>Dashboard</em>', desc: 'Panel ejecutivo con KPIs en tiempo real de todo tu negocio.', tags: ['KPIs', 'Tiempo real'] },
 ];
 
 const QUOTES = [
@@ -69,7 +68,7 @@ const QUOTES = [
 const FAQ_ITEMS = [
   { q: '¿Funciona sin conexión a internet?', a: 'Sí. Polaris guarda todo localmente y sincroniza solo cuando recuperás la conexión. Nunca parás de vender ni de facturar.' },
   { q: '¿Qué pasa si Hacienda rechaza un DTE?', a: 'El sistema avisa en tiempo real con el código de error exacto del MH. Podés corregir y reenviar sin perder el correlativo ni detener la caja.' },
-  { q: '¿Cuánto cuesta instalar Polaris Enterprise?', a: 'La descarga e instalación son completamente gratis. Solo comprás paquetes de DTE electrónicos cuando los necesitás. Sin contrato, sin renta mensual.' },
+  { q: '¿Cuánto cuesta instalar Polaris Enterprise?', a: 'En la versión Cloud armás tu plan con los módulos que necesitás (desde un solo módulo) y comprás packs de DTE según tu volumen. En la versión Local pagás una licencia única y recibís un instalador personalizado con tus módulos ya integrados. Sin contratos atados en ninguna de las dos.' },
   { q: '¿Compatible con mi impresora térmica?', a: 'Soporta cualquier impresora ESC/POS: Epson, Bixolon, Star, ZKTeco, Sewoo y modelos genéricos USB o en red.' },
   { q: '¿Puedo manejar varias sucursales desde un solo panel?', a: 'Sí. Multi-sucursal incluido sin costo adicional. Ves ventas, inventario y DTEs de todas tus tiendas consolidados en tiempo real.' },
   { q: '¿Mis datos están seguros?', a: 'Backup diario cifrado en la nube. Tus datos también viven localmente — si el servidor cae, tu operación no para con él.' },
@@ -85,25 +84,30 @@ const NAV_LINKS = [
 ];
 
 const VC_COMPARE = [
-  ['Base de datos', 'Neon PostgreSQL (nube)', 'PostgreSQL en tu PC'],
+  ['Base de datos', 'Neon PostgreSQL (nube)', 'PostgreSQL embebido — incluido'],
   ['Internet requerido', 'Siempre', 'Solo al emitir DTE'],
-  ['Precio', 'Por paquetes DTE', 'Licencia única'],
+  ['Precio', 'Módulos mensuales + packs DTE', 'Licencia única + packs DTE'],
   ['Multi-sucursal', '✓ Nativo', 'Con configuración'],
-  ['Backup', 'Automático en nube', 'ZIP manual local'],
-  ['Módulos premium', 'Incluidos en plan', 'Activados remotamente'],
-  ['Activación', 'Web o descarga', 'Wizard + licencia'],
+  ['Backup', 'Automático en nube', 'Respaldo local desde la app'],
+  ['Módulos', 'Activás cuando querás', 'Integrados en tu instalador'],
+  ['Activación', 'Descarga + clave de licencia', 'Instalador personalizado, vinculado a tu PC'],
+  ['Actualizaciones', 'Automáticas', 'Nueva versión bajo pedido'],
 ];
 
 const HERO_BARS = [42, 64, 50, 88, 70, 95, 75];
 const PS_BARS = [42, 64, 50, 88, 70, 95, 75, 60];
 
-/* Cosmos: módulos como planetas que se ensamblan en órbita (GSAP ScrollTrigger) */
+/* Cosmos: módulos REALES del sistema como planetas en órbita (GSAP ScrollTrigger).
+   fd/fdel = duración/retardo de la deriva flotante post-ensamblaje. */
 const COSMOS_PLANETS = [
-  { label: 'Caja POS',   cls: 'cp-terra', size: 96, x: 24, y: 26, ring: false },
-  { label: 'DTE',        cls: 'cp-navy',  size: 66, x: 74, y: 20, ring: false },
-  { label: 'Inventario', cls: 'cp-gold',  size: 78, x: 82, y: 64, ring: true },
-  { label: 'Planilla',   cls: 'cp-sage',  size: 58, x: 27, y: 74, ring: false },
-  { label: 'Reportes',   cls: 'cp-slate', size: 46, x: 62, y: 84, ring: false },
+  { label: 'Caja POS',     cls: 'cp-terra', size: 92, x: 22, y: 24, ring: false, fd: 7,   fdel: 0,   hideSm: false },
+  { label: 'DTE',          cls: 'cp-navy',  size: 64, x: 71, y: 15, ring: false, fd: 8.5, fdel: 1.2, hideSm: false },
+  { label: 'Inventario',   cls: 'cp-gold',  size: 76, x: 84, y: 58, ring: true,  fd: 9,   fdel: 0.6, hideSm: false },
+  { label: 'Compras',      cls: 'cp-ice',   size: 52, x: 10, y: 46, ring: false, fd: 7.5, fdel: 2,   hideSm: false },
+  { label: 'Planilla',     cls: 'cp-sage',  size: 56, x: 25, y: 76, ring: false, fd: 8,   fdel: 1.6, hideSm: false },
+  { label: 'Contabilidad', cls: 'cp-rose',  size: 60, x: 89, y: 27, ring: false, fd: 9.5, fdel: 0.3, hideSm: true },
+  { label: 'Restaurante',  cls: 'cp-teal',  size: 48, x: 60, y: 86, ring: false, fd: 7.2, fdel: 2.4, hideSm: true },
+  { label: 'Reportes',     cls: 'cp-slate', size: 44, x: 42, y: 8,  ring: false, fd: 8.8, fdel: 1,   hideSm: false },
 ];
 // Campo de estrellas determinista (mismas posiciones en cada build)
 const STARS = Array.from({ length: 70 }, (_, i) => {
@@ -120,10 +124,13 @@ const STARS = Array.from({ length: 70 }, (_, i) => {
 });
 
 const WA_URL = 'https://wa.me/50300000000?text=Hola%2C%20me%20interesa%20Polaris%20Enterprise';
+const WA_LOCAL_URL = 'https://wa.me/50300000000?text=Hola%2C%20quiero%20cotizar%20mi%20instalador%20Polaris%20Local%20personalizado';
 const WEB_APP = 'https://polaris-web-sooty.vercel.app';
 const RELEASE_PAGE = 'https://github.com/Developer545/polaris-releases/releases/latest';
 const CLOUD_FALLBACK = 'https://github.com/Developer545/polaris-releases/releases/download/v1.0.4/Polaris-Cloud-1.0.4-win-x64.exe';
-const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/releases/download/v1.0.4/Polaris-Local-1.0.4-win-x64.exe';
+// Herramienta pública de identificación de PC (Node SEA). Subir el asset con este
+// nombre exacto a cada release para que el link "latest" siempre resuelva.
+const ID_TOOL_URL = 'https://github.com/Developer545/polaris-releases/releases/latest/download/Polaris-ID.exe';
 ---
 <!DOCTYPE html>
 <html lang="es-SV" class="pal-mercurio">
@@ -252,8 +259,8 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
             <a href={CLOUD_FALLBACK} class="btn btn-ink" data-dl="cloud" download rel="noopener">
               Cloud para Windows <span class="dl-meta" data-dl-meta>(v1.0.4)</span> <span class="arrow">↓</span>
             </a>
-            <a href={LOCAL_FALLBACK} class="btn btn-outline" data-dl="local" download rel="noopener">
-              Local para Windows <span class="dl-meta" data-dl-meta>(v1.0.4)</span> <span class="arrow">↓</span>
+            <a href="#descargar" class="btn btn-outline">
+              Local a tu medida <span class="arrow">→</span>
             </a>
             <a class="btn btn-ghost" href={WEB_APP} target="_blank" rel="noopener">Abrir versión web <span class="arrow">→</span></a>
           </div>
@@ -427,6 +434,8 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
           {STARS.map((s) => (
             <span class="cstar" style={`left:${s.x}%;top:${s.y}%;--cs:${s.s}px;--ctw:${s.d}s`}></span>
           ))}
+          <span class="cshoot cs-1"></span>
+          <span class="cshoot cs-2"></span>
         </div>
 
         <svg class="cosmos-orbits" viewBox="0 0 1000 640" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -443,7 +452,7 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
         </div>
 
         {COSMOS_PLANETS.map((p, i) => (
-          <div class={`cplanet ${p.cls}`} data-cplanet={i} style={`left:${p.x}%;top:${p.y}%;--cpsize:${p.size}px`}>
+          <div class={`cplanet ${p.cls}${p.hideSm ? ' cp-hide-sm' : ''}`} data-cplanet={i} style={`left:${p.x}%;top:${p.y}%;--cpsize:${p.size}px;--cfd:${p.fd}s;--cfdel:${p.fdel}s`}>
             {p.ring && <span class="cplanet-ring back" aria-hidden="true"></span>}
             <span class="cplanet-sphere"></span>
             {p.ring && <span class="cplanet-ring front" aria-hidden="true"></span>}
@@ -684,10 +693,10 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
           <span class="label">/ Módulos</span>
         </div>
         <div>
-          <h2 class="display">Doce módulos, <span class="alt">una sola</span> instalación.</h2>
+          <h2 class="display">Diez módulos base, <span class="alt">incluidos</span> siempre.</h2>
           <p class="desc">
-            No vendemos add-ons. Todo viene incluido el día que instalás Polaris Enterprise — vos activás
-            los módulos a medida que tu negocio los necesita.
+            Toda instalación de Polaris trae estos diez módulos de fábrica.
+            Los add-ons de la siguiente sección se suman según el giro de tu negocio.
           </p>
         </div>
       </div>
@@ -715,10 +724,10 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
           <span class="label">/ Armá tu plan</span>
         </div>
         <div>
-          <h2 class="display">Módulos <em>a la medida.</em></h2>
+          <h2 class="display">Add-ons <em>a la medida.</em></h2>
           <p class="desc">
-            Empezás con DTE y vas activando lo que necesitás. Sin contratos atados —
-            cada módulo es un add-on mensual sobre tu plan de facturación.
+            Los diez módulos base van incluidos. Estos add-ons se suman según tu giro —
+            en Cloud como plan mensual, en Local integrados a tu licencia. Sin contratos atados.
           </p>
         </div>
       </div>
@@ -752,10 +761,10 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
           <span class="label">/ Precios</span>
         </div>
         <div>
-          <h2 class="display">Pagás por DTE. <em>Punto.</em></h2>
+          <h2 class="display">Precio claro. <em>Sin sorpresas.</em></h2>
           <p class="desc">
-            Sin licencias mensuales escondidas. Polaris Enterprise es <b>gratis</b> de descargar e instalar — solo comprás paquetes de DTE
-            electrónicos cuando los necesitás. Tu saldo no expira.
+            Armás tu plan de módulos a la medida y comprás paquetes de DTE
+            electrónicos cuando los necesitás. Tu saldo de DTE no expira.
           </p>
         </div>
       </div>
@@ -763,10 +772,10 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
       <div class="pricing-banner" data-reveal>
         <span class="pb-glyph">$</span>
         <div>
-          <div class="pb-title">El POS y los módulos son <em>gratis</em>. Solo pagás los DTE que emitís.</div>
-          <div class="pb-desc">Si nunca facturás electrónico, nunca nos pagás. Si facturás 10,000 al mes — el costo unitario es el más bajo del mercado salvadoreño.</div>
+          <div class="pb-title">Dos cosas, <em>nada más</em>: tu plan de módulos y tus packs de DTE.</div>
+          <div class="pb-desc">Pagás solo los módulos que usás — y el costo por DTE es el más bajo del mercado salvadoreño. Sin cargos escondidos ni contratos atados.</div>
         </div>
-        <div class="pb-meta">Sin licencias · Sin renta</div>
+        <div class="pb-meta">Sin permanencia · Sin sorpresas</div>
       </div>
 
       <div class="pricing-grid" data-reveal-group>
@@ -783,7 +792,7 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
       </div>
 
       <p style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:22px;letter-spacing:.04em">
-        Todos los packs incluyen acceso completo al POS, ERP, DTE electrónico y actualizaciones automáticas · tu saldo NUNCA expira
+        Todos los packs incluyen transmisión al MH, firma digital y actualizaciones automáticas · tu saldo NUNCA expira
       </p>
     </div>
   </section>
@@ -887,28 +896,32 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
         </div>
 
         <div class="version-card local-card">
-          <div class="vc-badge local">Local · Nuevo</div>
+          <div class="vc-badge local">Local · A tu medida</div>
           <div class="vc-name">Polaris <em>Local</em></div>
-          <div class="vc-tagline">Todo en tu PC — sin depender de servidores</div>
+          <div class="vc-tagline">Instalador personalizado, generado para tu negocio</div>
           <ul class="vc-list">
             <li><span class="vc-check">✓</span> Funciona <strong>100% offline</strong> — BD en tu PC</li>
-            <li><span class="vc-check">✓</span> DTE requiere internet solo al emitir</li>
+            <li><span class="vc-check">✓</span> PostgreSQL embebido — no instalás nada extra</li>
             <li><span class="vc-check">✓</span> Pago único de licencia — sin mensualidades</li>
+            <li><span class="vc-check">✓</span> Tus módulos vienen integrados de fábrica</li>
+            <li><span class="vc-check">✓</span> Licencia vinculada a tu PC — nadie más la usa</li>
             <li><span class="vc-check">✓</span> Datos en tu máquina — máxima privacidad</li>
-            <li><span class="vc-check">✓</span> Wizard de instalación guiada en 5 min</li>
-            <li><span class="vc-check">✓</span> Backups manuales en ZIP local</li>
           </ul>
-          <div class="vc-note">Ideal para emprendedores individuales sin servidor propio.</div>
+          <div class="vc-steps">
+            <div class="vc-step"><span class="vc-step-num">1</span> Escribinos y elegí los módulos que necesitás</div>
+            <div class="vc-step"><span class="vc-step-num">2</span> Corré <strong>Polaris-ID</strong> y compartinos el código de tu PC</div>
+            <div class="vc-step"><span class="vc-step-num">3</span> Recibí tu instalador .exe listo — instalás y facturás</div>
+          </div>
           <div class="vc-actions">
-            <a href={LOCAL_FALLBACK} class="btn btn-accent" data-dl="local" download rel="noopener">
-              Descargar Polaris Local <span class="dl-meta" data-dl-meta>(v1.0.4)</span> <span class="arrow">↓</span>
+            <a href={WA_LOCAL_URL} class="btn btn-accent" target="_blank" rel="noopener">
+              Solicitar mi instalador <span class="arrow">→</span>
             </a>
-            <a class="btn btn-ghost" href="#contacto">
-              Solicitar licencia <span class="arrow">→</span>
+            <a class="btn btn-ghost" href={ID_TOOL_URL} download rel="noopener">
+              Descargar Polaris-ID <span class="arrow">↓</span>
             </a>
           </div>
           <div class="vc-req">
-            <strong>Requisitos:</strong> Windows 10/11 · PostgreSQL 14+ · 4 GB RAM · 2 GB espacio
+            <strong>Requisitos:</strong> Windows 10/11 · 4 GB RAM · 2 GB espacio — todo lo demás va incluido
           </div>
         </div>
       </div>
@@ -974,7 +987,7 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
       <p>Dos versiones. Un solo software. Empezá hoy.</p>
       <div class="cta-actions">
         <a href={CLOUD_FALLBACK} class="btn btn-ink" data-dl="cloud" download rel="noopener">Enterprise — Windows <span class="arrow">↓</span></a>
-        <a href={LOCAL_FALLBACK} class="btn btn-outline" data-dl="local" download rel="noopener">Local — Windows <span class="arrow">↓</span></a>
+        <a href="#descargar" class="btn btn-outline">Local a tu medida <span class="arrow">→</span></a>
         <a href={WEB_APP} target="_blank" rel="noopener" class="btn btn-ghost">Versión web <span class="arrow">→</span></a>
       </div>
       <div class="post-cta">
@@ -1076,8 +1089,11 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
         { x: -260, y: -170, r: -70, s: 0.45 },
         { x: 240, y: -200, r: 55, s: 0.4 },
         { x: 280, y: 170, r: 80, s: 0.5 },
+        { x: -300, y: 40, r: -60, s: 0.4 },
         { x: -250, y: 200, r: -45, s: 0.35 },
+        { x: 300, y: -60, r: 70, s: 0.45 },
         { x: 160, y: 240, r: 100, s: 0.45 },
+        { x: 40, y: -240, r: 40, s: 0.4 },
       ];
 
       const tl = gsap.timeline({
@@ -1187,26 +1203,24 @@ const LOCAL_FALLBACK = 'https://github.com/Developer545/polaris-releases/release
     });
 
     /* ── Descargas: versión real desde GitHub Releases ───── */
+    /* Solo la versión Cloud es descarga pública; Polaris Local se
+       entrega como instalador personalizado generado por cliente. */
     const RELEASE_API = 'https://api.github.com/repos/Developer545/polaris-releases/releases/latest';
     fetch(RELEASE_API)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data?.assets) return;
-        const pick = (kind: string) => data.assets.find((a: any) => {
+        const asset = data.assets.find((a: any) => {
           const n = (a.name || '').toLowerCase();
-          if (!n.endsWith('.exe')) return false;
-          return kind === 'local' ? n.includes('local') : (n.includes('cloud') || !n.includes('local'));
+          return n.endsWith('.exe') && (n.includes('cloud') || !n.includes('local'));
         });
-        for (const kind of ['cloud', 'local']) {
-          const asset = pick(kind);
-          if (!asset) continue;
-          const size = asset.size ? `${Math.round(asset.size / 1024 / 1024)} MB` : '';
-          document.querySelectorAll(`[data-dl="${kind}"]`).forEach((a) => {
-            (a as HTMLAnchorElement).href = asset.browser_download_url;
-            const meta = a.querySelector('[data-dl-meta]');
-            if (meta) meta.textContent = `(${data.tag_name || ''}${size ? ' · ' + size : ''})`;
-          });
-        }
+        if (!asset) return;
+        const size = asset.size ? `${Math.round(asset.size / 1024 / 1024)} MB` : '';
+        document.querySelectorAll('[data-dl="cloud"]').forEach((a) => {
+          (a as HTMLAnchorElement).href = asset.browser_download_url;
+          const meta = a.querySelector('[data-dl-meta]');
+          if (meta) meta.textContent = `(${data.tag_name || ''}${size ? ' · ' + size : ''})`;
+        });
       })
       .catch(() => {});
   </script>

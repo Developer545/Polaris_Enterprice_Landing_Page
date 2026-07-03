@@ -594,22 +594,42 @@ export function DTECalculator() {
 }
 
 // ── Module Builder ─────────────────────────────────────────
+// Add-ons REALES del registro Polaris (packages/shared-types/module-registry.ts).
+// Los 10 módulos base (dashboard, pos, ventas, dte, turnos_caja, clientes,
+// proveedores, inventario, productos, servicios) van incluidos — no se listan.
+// PRECIOS DE REFERENCIA: ajustar a la lista oficial antes de publicar.
 const MODULES_DATA = [
-  { id: 'pos',        tier: 1, name: 'Caja POS',              price: 20, desc: 'Ventas rápidas, scanner, atajos de teclado y multi-pago.',      deps: [] },
-  { id: 'crm',        tier: 1, name: 'Clientes / CRM',         price: 12, desc: 'Historial de compras, segmentos y descuentos por categoría.',   deps: [] },
-  { id: 'reportes',   tier: 1, name: 'Reportes ejecutivos',    price: 12, desc: 'Dashboards en tiempo real exportables a PDF y Excel.',          deps: ['pos'] },
-  { id: 'inventario', tier: 2, name: 'Inventario + Kardex',    price: 20, desc: 'Multi-bodega, costos PEPS/promedio, conteo físico móvil.',      deps: [] },
-  { id: 'compras',    tier: 2, name: 'Compras + Proveedores',  price: 18, desc: 'Órdenes de compra, recepción y cuentas por pagar.',             deps: ['inventario'] },
-  { id: 'cxc',        tier: 2, name: 'Cuentas por cobrar',     price: 15, desc: 'Antigüedad de saldos, abonos parciales y recordatorios.',       deps: ['crm'] },
-  { id: 'planilla',   tier: 3, name: 'Empleados + Planilla SV',price: 38, desc: 'ISSS, AFP, ISR automático. Boletas y constancias mensuales.',   deps: [] },
-  { id: 'api',        tier: 3, name: 'API & Conectores',       price: 45, desc: 'Integrá tu e-commerce, contabilidad o sistema heredado.',       deps: [] },
+  // Tier 1 — Operación diaria
+  { id: 'compras',            tier: 1, name: 'Compras',               price: 18, desc: 'Órdenes de compra, recepción y costos actualizados.',            deps: [] },
+  { id: 'gastos',             tier: 1, name: 'Gastos',                price: 10, desc: 'Categorías de gasto y control mensual de egresos.',              deps: [] },
+  { id: 'cxc',                tier: 1, name: 'Cuentas por cobrar',    price: 15, desc: 'Antigüedad de saldos, abonos parciales y recordatorios.',        deps: [] },
+  { id: 'cxp',                tier: 1, name: 'Cuentas por pagar',     price: 12, desc: 'Saldos a proveedores y programación de pagos.',                  deps: ['compras'] },
+  { id: 'cotizaciones',       tier: 1, name: 'Cotizaciones',          price: 10, desc: 'Cotizás, enviás y convertís a venta en un click.',               deps: [] },
+  { id: 'ordenes_servicio',   tier: 1, name: 'Órdenes de servicio',   price: 12, desc: 'Talleres y servicio técnico con seguimiento de estado.',         deps: [] },
+  // Tier 2 — Ventas y clientes
+  { id: 'citas',              tier: 2, name: 'Citas',                 price: 10, desc: 'Agenda de citas conectada a tus servicios.',                     deps: [] },
+  { id: 'loyalty',            tier: 2, name: 'Fidelización',          price: 8,  desc: 'Puntos y recompensas para clientes frecuentes.',                 deps: [] },
+  { id: 'restaurante',        tier: 2, name: 'Mesas / Restaurante',   price: 20, desc: 'Mesas, comandas a cocina, meseros y reservaciones.',             deps: [] },
+  { id: 'menu',               tier: 2, name: 'Menú digital',          price: 8,  desc: 'Menú del restaurante administrable desde el sistema.',           deps: ['restaurante'] },
+  { id: 'metas_ventas',       tier: 2, name: 'Metas de ventas',       price: 8,  desc: 'Metas por vendedor y seguimiento de avance.',                    deps: [] },
+  { id: 'chatwoot',           tier: 2, name: 'Atención WhatsApp',     price: 15, desc: 'Bandeja de WhatsApp integrada para atender clientes.',           deps: [] },
+  // Tier 3 — RRHH
+  { id: 'empleados',          tier: 3, name: 'Empleados',             price: 12, desc: 'Expedientes, cargos y documentos del personal.',                 deps: [] },
+  { id: 'asistencia',         tier: 3, name: 'Control de asistencia', price: 10, desc: 'Marcación de entrada/salida y reporte de horas.',                deps: ['empleados'] },
+  { id: 'planilla',           tier: 3, name: 'Planilla SV',           price: 25, desc: 'ISSS, AFP e ISR automático. Boletas y constancias.',             deps: ['empleados'] },
+  // Tier 4 — Finanzas y empresa
+  { id: 'contabilidad',       tier: 4, name: 'Contabilidad',          price: 30, desc: 'Catálogo de cuentas, partidas y estados financieros.',           deps: ['compras', 'gastos'] },
+  { id: 'libros_iva',         tier: 4, name: 'Libros IVA (F-07)',     price: 12, desc: 'Libros de compras y ventas listos para Hacienda.',               deps: ['compras'] },
+  { id: 'activos_fijos',      tier: 4, name: 'Activos fijos',         price: 10, desc: 'Registro y depreciación de los activos de tu negocio.',          deps: [] },
+  { id: 'reportes_avanzados', tier: 4, name: 'Reportes avanzados',    price: 12, desc: 'Reportes ejecutivos exportables a PDF y Excel.',                 deps: [] },
+  { id: 'proyectos',          tier: 4, name: 'Proyectos',             price: 15, desc: 'Presupuesto, avance y rentabilidad por proyecto.',               deps: [] },
 ];
 
 const BUNDLES_DATA = [
-  { id: 'starter',     name: 'Starter',     color: 'default', desc: 'Para empezar',       modules: ['pos'] },
-  { id: 'tienda',      name: 'Tienda',      color: 'accent',  desc: 'La tienda completa',  modules: ['pos', 'inventario', 'crm'] },
-  { id: 'operaciones', name: 'Operaciones', color: 'warm',    desc: 'Control total',        modules: ['pos', 'inventario', 'compras', 'cxc', 'reportes'] },
-  { id: 'empresa',     name: 'Empresa',     color: 'dark',    desc: 'Para crecer',          modules: ['pos', 'inventario', 'compras', 'cxc', 'planilla', 'reportes'] },
+  { id: 'comercio',    name: 'Comercio',    color: 'default', desc: 'Tienda con proveedores', modules: ['compras', 'cxp', 'gastos'] },
+  { id: 'restaurante', name: 'Restaurante', color: 'accent',  desc: 'Mesas y cocina',         modules: ['restaurante', 'menu', 'compras', 'gastos'] },
+  { id: 'operaciones', name: 'Operaciones', color: 'warm',    desc: 'Control total',          modules: ['compras', 'cxp', 'gastos', 'cxc', 'reportes_avanzados'] },
+  { id: 'empresa',     name: 'Empresa',     color: 'dark',    desc: 'RRHH y contabilidad',    modules: ['compras', 'cxp', 'gastos', 'cxc', 'empleados', 'planilla', 'contabilidad', 'reportes_avanzados'] },
 ];
 
 function getBundlePrice(moduleIds) {
@@ -668,9 +688,10 @@ export function ModuleBuilder() {
   const finalTotal   = rawTotal - discAmt + branchCost;
 
   const tiers = [
-    { label: 'Tier 1 — Esenciales', num: 1 },
-    { label: 'Tier 2 — Operacional', num: 2 },
-    { label: 'Tier 3 — Avanzado', num: 3 },
+    { label: 'Operación diaria', num: 1 },
+    { label: 'Ventas y clientes', num: 2 },
+    { label: 'Recursos humanos', num: 3 },
+    { label: 'Finanzas y empresa', num: 4 },
   ];
 
   return (
@@ -753,7 +774,7 @@ export function ModuleBuilder() {
                 <span>Add-ons / mes</span>
                 <div className="mb-sum-total-num">${finalTotal}<small>/mes</small></div>
               </div>
-              <div className="mb-sum-note">+ packs DTE según tu volumen mensual</div>
+              <div className="mb-sum-note">+ packs DTE según tu volumen · los 10 módulos base van incluidos</div>
 
               <a href="#contacto" className="mb-sum-cta">Cotizar este plan →</a>
 
